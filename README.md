@@ -8,6 +8,8 @@ Star is easy，可随着 Stars Repositories 增长和时间流逝，在需要使
 
 Gitstars 由此诞生 🎉
 
+纯前端的实现，没有服务器和数据库，你到 Github 就是一切。
+
 # Gitstars
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
