@@ -30,15 +30,15 @@
       </header>
       <transition name="slide-down">
         <form v-show="labelNameFormVisible" class="label-form" onsubmit="return false">
-          <input v-model="labelName" ref="labelFormNameInput" type="text" class="label-form__input--name" placeholder="标签名称" @input="handleInputLabelName" @focus="handleInputLabelName" @blur="handleInputLabelName" @keyup.enter.prevent="handleAddLabel" @keyup.esc="handleCancelAddLabel">
-          <div class="label-form__operate" :class="saveOrCancel" @mouseleave="saveOrCancel = ''">
-            <button type="button" class="label-form__operate-btn save" @mouseenter="saveOrCancel = 'save'" @click="handleAddLabel">SAVE</button>
-            <button type="button" class="label-form__operate-btn cancel" @mouseenter="saveOrCancel = 'cancel'" @click="handleCancelAddLabel">CANCEL</button>
+          <input v-model="labelName" :class="labelNameInputState" ref="labelFormNameInput" type="text" class="label-form__input--name" placeholder="标签名称" @input="handleInputLabelName" @focus="handleFocusLabelName" @blur="handleBlurLabelName" @keyup.enter.prevent="handleAddLabel" @keyup.esc="handleCancelAddLabel">
+          <div class="label-form__operate" :class="labelNameBtnState">
+            <button type="button" class="label-form__operate-btn save" @click="handleAddLabel">SAVE</button>
+            <button type="button" class="label-form__operate-btn cancel" @click="handleCancelAddLabel">CANCEL</button>
           </div>
         </form>
       </transition>
       <div v-show="isEditLabel" class="edit-label-tip">双击标签修改名称，拖拽标签排列顺序</div>
-      <draggable :list="dragLabels" :options="dragOptions" class="draggable-labels">
+      <draggable :list="dragLabels" :options="dragOptions" :class="{ edit: isEditLabel }" class="draggable-labels">
         <transition-group name="label-list" tag="ul" class="nav-label label-list">
           <li v-for="(label, index) of dragLabels" :key="label.id" :class="{ active: label.id === currentLabel.id }" class="nav-item" @click="handleToggleLabel(label)">
             <label class="nav-item__label slo" @dblclick="handleEditLabelName(label)">
@@ -72,11 +72,15 @@
 <script>
 import draggable from 'vuedraggable'
 
+import config from '../config'
 import constants from '../constants'
 
+const { norifyPosition } = config
 const { LABEL_NAME_CANNOT_ENPTY, LABEL_NAME_ALREADY_EXIST } = constants
-const classSave = 'save'
-const classCancel = 'cancel'
+const SAVE = 'save'
+const CANCEL = 'cancel'
+const FOCUS = 'focus'
+const BLUR = 'blur'
 let dragLabelsClone = []
 
 export default {
@@ -96,7 +100,8 @@ export default {
       ],
       labelNameFormVisible: false,
       labelName: '',
-      saveOrCancel: '',
+      labelNameInputState: FOCUS,
+      labelNameBtnState: CANCEL,
       isEditLabel: false,
       dragLabels: tranformLabels(this.labels)
     }
@@ -134,7 +139,13 @@ export default {
       this.$nextTick(() => this.$refs.labelFormNameInput.focus())
     },
     handleInputLabelName () {
-      this.saveOrCancel = this.labelName.trim().length ? classSave : classCancel
+      this.labelNameBtnState = this.labelName.trim().length ? SAVE : CANCEL
+    },
+    handleFocusLabelName () {
+      this.labelNameInputState = FOCUS
+    },
+    handleBlurLabelName () {
+      this.labelNameInputState = BLUR
     },
     handleAddLabel () {
       let message = ''
@@ -142,7 +153,7 @@ export default {
       if (!labelName) message = LABEL_NAME_CANNOT_ENPTY
       if (this.labels.find(({ name }) => name === labelName)) message = LABEL_NAME_ALREADY_EXIST
       if (message) {
-        this.$notify.warning({ message, showClose: false, position: 'bottom-right' })
+        this.$notify.warning({ message, showClose: false, position: norifyPosition })
         return this.$refs.labelFormNameInput.focus()
       }
 
@@ -152,6 +163,7 @@ export default {
     },
     handleCancelAddLabel () {
       this.labelNameFormVisible = false
+      this.labelNameBtnState = CANCEL
       this.labelName = ''
     },
     handleEditLabels () {
@@ -179,7 +191,7 @@ export default {
       }
 
       if (this.dragLabels.find(dragLabel => (dragLabel.name === newLabelName && dragLabel !== label))) {
-        this.$notify.warning({ message: LABEL_NAME_ALREADY_EXIST, showClose: false, position: 'bottom-right' })
+        this.$notify.warning({ message: LABEL_NAME_ALREADY_EXIST, showClose: false, position: norifyPosition })
         return $input.focus()
       }
 
@@ -196,7 +208,7 @@ export default {
       if (this.dragLabels.find(dragLabel => (dragLabel.name === newLabelName && dragLabel !== label))) message = LABEL_NAME_ALREADY_EXIST
 
       if (message) {
-        this.$notify.warning({ message, showClose: false, position: 'bottom-right' })
+        this.$notify.warning({ message, showClose: false, position: norifyPosition })
         return $input.focus()
       }
 
@@ -273,7 +285,6 @@ function tranformLabels (labels = {}) {
   margin: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   list-style: none;
-  cursor: pointer;
 }
 
 .nav-item {
@@ -286,6 +297,7 @@ function tranformLabels (labels = {}) {
   border-left: 3px solid transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 12px;
+  cursor: pointer;
   transition: all 0.3s;
 }
 
@@ -294,14 +306,13 @@ function tranformLabels (labels = {}) {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.nav-item:active,
 .nav-item.active,
 .nav-caption__operate-btn:active {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
 .nav-item.active {
-  border-left: 3px solid #108ee9;
+  border-left-color: #108ee9;
   border-bottom-color: transparent;
 }
 
@@ -315,7 +326,7 @@ function tranformLabels (labels = {}) {
   flex: auto;
   padding-right: 10px;
   line-height: 40px;
-  cursor: pointer;
+  cursor: inherit;
 }
 
 .nav-item__label .fa {
@@ -353,6 +364,16 @@ function tranformLabels (labels = {}) {
 .draggable-labels::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+.draggable-labels.edit .nav-item {
+  cursor: move;
+}
+
+.draggable-labels.edit .nav-item.active {
+  border-left-color: transparent;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background-color: transparent;
 }
 
 .nav-item-badge {
@@ -443,11 +464,16 @@ function tranformLabels (labels = {}) {
   line-height: 1.5;
   outline: none;
   background-color: rgba(255, 255, 255, 0.1);
+  transition: color 0.3s, background-color 0.3s;
 }
 
 .label-form__input--name:focus {
   color: #28343d;
   background-color: #fff;
+}
+
+.label-form__input--name.blur {
+  color: #d9d9d9;
 }
 
 .label-form__operate {
@@ -462,6 +488,7 @@ function tranformLabels (labels = {}) {
   width: 100%;
   height: 100%;
   border: none;
+  border-radius: 0;
   text-align: center;
   color: #fff;
   cursor: pointer;
@@ -471,7 +498,6 @@ function tranformLabels (labels = {}) {
 }
 
 .label-form__operate-btn.save {
-  margin-left: -50%;
   background-color: #3dbd7d;
 }
 
@@ -488,7 +514,6 @@ function tranformLabels (labels = {}) {
 }
 
 .label-form__operate-btn.cancel {
-  margin-left: 50%;
   background-color: #697178;
 }
 
@@ -513,6 +538,7 @@ function tranformLabels (labels = {}) {
 .fa-times-circle {
   font-size: 16px;
   transition: transform 0.1s;
+  cursor: pointer;
 }
 
 .fa-times-circle:hover {
