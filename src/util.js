@@ -1,4 +1,4 @@
-export function parseURLSearch (searchStr = window.location.search) {
+export const parseURLSearch = function parseURLSearch (searchStr = window.location.search) {
   const search = {}
 
   if (!searchStr.length) return search
@@ -9,6 +9,5 @@ export function parseURLSearch (searchStr = window.location.search) {
     const skv = kv.split('=')
     search[skv[0]] = decodeURIComponent(skv[1])
   }
-
   return search
 }

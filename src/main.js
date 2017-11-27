@@ -2,18 +2,19 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import { Tag, Input, Button, Popover, Autocomplete, Notification } from 'element-ui'
-
+import App from './App'
 import { parseURLSearch } from './util'
 import { getGitstarsAccessToken, getUserInfo } from './api'
 import config from './config'
 
-Vue.config.productionTip = false
 Vue.use(Tag)
 Vue.use(Input)
 Vue.use(Button)
 Vue.use(Popover)
 Vue.use(Autocomplete)
 Vue.prototype.$notify = Notification
+
+Vue.config.productionTip = false
 
 if (process.env.NODE_ENV === 'development') {
   require('normalize.css')
@@ -50,21 +51,22 @@ new Promise(async (resolve, reject) => {
       client_secret: clientSecret
     })
     window.localStorage.setItem(GITSTARS_ACCESS_TOKEN, access_token)
+
     resolve(access_token)
   } else {
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=gist`
   }
 }).then(async accessToken => {
   window._gitstars = { accessToken: accessToken }
-
   const gitstarsUser = window.localStorage.getItem(GITSTARS_USER)
+
+  /**
+   * 需要注意！
+   * getUserInfo 接口依赖 window._gitstars.accessToken
+   * 所以以下代码执行之前就需要给赋值 window._gitstars
+   */
   window._gitstars.user = gitstarsUser ? JSON.parse(gitstarsUser) : await getUserInfo()
   if (!gitstarsUser) window.localStorage.setItem(GITSTARS_USER, JSON.stringify(window._gitstars.user))
 
-  const App = () => import('./App')
-  new Vue({
-    el: '#app',
-    template: '<App/>',
-    components: { App }
-  })
+  new Vue({ el: '#app', template: '<App/>', components: { App } })
 })

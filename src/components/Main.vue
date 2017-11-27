@@ -2,7 +2,7 @@
   <main id="main">
     <layout-header :user="user"></layout-header>
     <div class="main-body">
-      <sub-sidebar :repos="filteredRepos" :load-starred-repos-completed="loadStarredReposCompleted" :current-label="currentLabel" @changeSearchValue="handleChangeSearchValue" @toggleRepo="handleToggleRepo" @toggleLabel="handleToggleLabel" @deleteRepoLabel="handleDeleteRepoLabel"></sub-sidebar>
+      <sub-sidebar :repos="currentRepos" :load-starred-repos-completed="loadStarredReposCompleted" :current-label="currentLabel" @changeSearchValue="handleChangeSearchValue" @toggleRepo="handleToggleRepo" @toggleLabel="handleToggleLabel" @deleteRepoLabel="handleDeleteRepoLabel"></sub-sidebar>
       <div class="content">
         <section v-show="repoReadme" class="repo-readme">
           <header class="repo-readme__header">
@@ -10,7 +10,7 @@
               <a :href="currentRepo.html_url" target="_blank">
                 <i class="fa fa-fw fa-lg fa-github" aria-hidden="true"></i>
               </a>
-              {{currentRepo.owner.login}} / {{currentRepo.name}}
+              {{ currentRepo.owner.login }} / {{ currentRepo.name }}
             </h3>
             <el-autocomplete v-model="labelName" :fetch-suggestions="handleFetchLabelSuggestions" ref="repoLabelNameInput" size="small" placeholder="新增标签" class="repo-label-input" @select="handleAddRepoLabel" select-when-unmatched>
               <i slot="prefix" class="fa fa-fw fa-lg fa-tag el-input__icon"></i>
@@ -37,7 +37,6 @@
 <script>
 import LayoutHeader from './Header'
 import SubSidebar from './SubSidebar'
-
 import { getRepoReadme, getRenderedReadme } from '../api'
 import config from '../config'
 import constants from '../constants'
@@ -52,7 +51,7 @@ export default {
     user: { type: Object, default: {} },
     repos: { type: Array, default: [] },
     loadStarredReposCompleted: { type: Boolean, default: false },
-    labels: { type: Array, default: [] },
+    customLabels: { type: Array, default: [] },
     currentLabel: { type: Object, default: {} }
   },
   data () {
@@ -66,28 +65,30 @@ export default {
     }
   },
   computed: {
-    filteredRepos () {
-      return this.repos.filter(({ owner = {}, name = '' } = {}) => {
+    currentRepos () {
+      return this.repos.filter(({ owner = {}, name = '' }) => {
         const { login = '' } = owner
         return (login.toLowerCase().includes(this.searchValue) || name.toLowerCase().includes(this.searchValue))
       })
     },
     currentRepoUnlabeledLabels () {
-      return this.labels.filter(label => !this.currentRepo._labels.find(({ id }) => id === label.id)).map(({ name }) => name)
+      return this.customLabels.filter(label => !this.currentRepo._labels.custom.find(({ id }) => id === label.id)).map(({ name }) => name)
     }
   },
   methods: {
-    async handleToggleRepo ({ login, repoId, repoName } = {}) {
-      this.currentRepo = this.repos.find(({ id }) => id === repoId)
+    async handleToggleRepo ({ id, owner, name }) {
+      this.currentRepo = this.repos.find(repo => repo.id === id)
       this.isSelectedRepo = true
       this.isLoadingRepoReadme = true
       this.repoReadme = ''
-      const { content } = await getRepoReadme(login, repoName)
+
+      const { content } = await getRepoReadme(owner.login, name)
+
       this.repoReadme = await getRenderedReadme(decodeURIComponent(escape(atob(content)))) // 包含中文内容的 base64 解码
       this.isLoadingRepoReadme = false
     },
-    handleToggleLabel (label) {
-      this.$emit('toggleLabel', label)
+    handleToggleLabel (payload) {
+      this.$emit('toggleLabel', payload)
     },
     handleChangeSearchValue (searchValue = '') {
       this.searchValue = searchValue.toLowerCase()
@@ -104,12 +105,11 @@ export default {
       const labelName = this.labelName.trim()
       if (!labelName) message = LABEL_NAME_CANNOT_ENPTY
 
-      const { id, _labels } = this.currentRepo
-      if (_labels.find(({ name }) => name === labelName)) message = LABEL_NAME_ALREADY_EXIST
+      if (this.currentRepo._labels.custom.find(({ name }) => name === labelName)) message = LABEL_NAME_ALREADY_EXIST
 
       if (message) return this.$notify.warning({ message, showClose: false, position: norifyPosition })
 
-      this.$emit('addRepoLabel', { labelName, repoId: id })
+      this.$emit('addRepoLabel', { id: this.currentRepo.id, name: labelName })
       this.labelName = ''
     }
   }

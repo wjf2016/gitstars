@@ -10,23 +10,32 @@
       <li v-for="label of defaultLabels" :key="label.id" :class="{ active: label.id === currentLabel.id }" class="nav-item" @click="handleToggleLabel(label)">
         <label class="nav-item__label">
           <i :class="label.icon" class="fa fa-fw" aria-hidden="true"></i>
-          <span>{{label.name}}</span>
+          <span>{{ label.name }}</span>
         </label>
-        <span class="nav-item-badge">{{label.id ? unlabeledReposLen : starredReposLen}}</span>
+        <span class="nav-item-badge">{{ label.id ? unlabeledReposLen : starredReposLen }}</span>
       </li>
     </ul>
     <div class="label-nav">
       <header class="nav-caption">
-        <h3 class="nav-caption__title">标签</h3>
-        <div class="nav-caption__operate-btn" :class="{ disabled: isEditLabel || labelNameFormVisible }" @click="handleAddNewLabel">
-          <i class="fa fa-plus-square" aria-hidden="true"></i>
-          <span>添加</span>
-        </div>
-        <div v-show="isEditLabel" class="nav-caption__operate-btn nav-caption__complete-btn" @click="handleCompleteEditLabels">完成</div>
-        <div v-show="!isEditLabel" :class="{ disabled: labelNameFormVisible }" class="nav-caption__operate-btn" @click="handleEditLabels">
-          <i class="fa fa-cog" aria-hidden="true"></i>
-          <span>编辑</span>
-        </div>
+        <h3 class="nav-caption__title">
+          <i class="fa fa-fw fa-tags" aria-hidden="true"></i>
+          <span>标签</span>
+        </h3>
+        <transition name="slide-to-left">
+          <div v-show="labelCategoryIndex === 0" class="nav-caption__operate">
+            <div :class="{ disabled: isEditLabel || labelNameFormVisible }" class="nav-caption__operate-btn" @click="handleAddNewLabel">
+              <i class="fa fa-plus-square" aria-hidden="true"></i>
+              <span>添加</span>
+            </div>
+            <transition-group name="enlarge" tag="div" class="nav-caption__group--edit-over">
+              <div v-show="isEditLabel" key="over" class="nav-caption__operate-btn nav-caption__complete-btn" @click="handleCompleteEditLabels">完成</div>
+              <div v-show="!isEditLabel" :class="{ disabled: labelNameFormVisible }" key="edit" class="nav-caption__operate-btn" @click="handleEditLabels">
+                <i class="fa fa-cog" aria-hidden="true"></i>
+                <span>编辑</span>
+            </div>
+            </transition-group>
+          </div>
+        </transition>
       </header>
       <transition name="slide-down">
         <form v-show="labelNameFormVisible" class="label-form" onsubmit="return false">
@@ -37,43 +46,70 @@
           </div>
         </form>
       </transition>
-      <div v-show="isEditLabel" class="edit-label-tip">双击标签修改名称，拖拽标签排列顺序</div>
-      <draggable :list="dragLabels" :options="dragOptions" :class="{ edit: isEditLabel }" class="draggable-labels">
-        <transition-group name="label-list" tag="ul" class="nav-label label-list">
-          <li v-for="(label, index) of dragLabels" :key="label.id" :class="{ active: label.id === currentLabel.id }" class="nav-item" @click="handleToggleLabel(label)">
-            <label class="nav-item__label slo" @dblclick="handleEditLabelName(label)">
-              <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
-              <span v-show="!label._isEdit" class="nav-item__name slo">{{label.name}}</span>
-              <input v-show="label._isEdit" :ref="label._ref" type="text" :value="label.name" class="nav-item__input--name" @blur="handleChangeLabelNameByBlur(label)" @keyup.enter="handleChangeLabelNameByEnter(label)" @keyup.esc="handleCancelEditLabelName(label)">
-            </label>
-            <el-popover placement="right" title="Are you sure?">
-              <i v-show="isEditLabel" slot="reference" class="fa fa-times-circle" aria-hidden="true" @click.stop="handleDeleteLabel"></i>
-              <footer class="popover-footer">
-                <el-button size="mini" @click="handleCancelDeleteLabel">No</el-button>
-                <el-button type="primary" size="mini" @click="handleConfirmDeleteLabel(label.id, index)">Yes</el-button>
-              </footer>
-            </el-popover>
-            <span v-show="!isEditLabel" class="nav-item-badge">{{label.repos.length}}</span>
-          </li>
-        </transition-group>
-      </draggable>
-      <div v-show="!labels.length" class="no-label vc-p">
-        <i class="fa fa-hand-o-up fa-2x" aria-hidden="true"></i>
-        <p>添加标签</p>
+      <transition name="slide-down">
+        <div v-show="isEditLabel" class="edit-label-tip">双击标签修改名称，拖拽标签排列顺序</div>
+      </transition>
+      <div class="label-list__group">
+        <transition name="slide-to-left">
+          <draggable v-show="labelCategoryIndex === 0" :list="dragLabels" :options="dragOptions" :class="{ edit: isEditLabel }" class="draggable-labels">
+            <transition-group name="label-list" tag="ul" class="nav-label label-list">
+              <li v-for="(label, index) of dragLabels" :key="label.id" :class="{ active: label.id === currentLabel.id }" class="nav-item" @click="handleToggleLabel(label)">
+                <div class="nav-item__label slo" @dblclick="handleEditLabelName(label)">
+                  <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
+                  <span v-show="!label._isEdit" class="nav-item__name slo">{{ label.name }}</span>
+                  <input v-show="label._isEdit" :ref="label._ref" type="text" :value="label.name" class="nav-item__input--name" @blur="handleChangeLabelNameByBlur(label)" @keyup.enter="handleChangeLabelNameByEnter(label)" @keyup.esc="handleCancelEditLabelName(label)">
+                </div>
+                <el-popover placement="right" title="Are you sure?">
+                  <i v-show="isEditLabel" slot="reference" class="fa fa-times-circle" aria-hidden="true" @click.stop="handleDeleteLabel"></i>
+                  <footer class="popover-footer">
+                    <el-button size="mini" @click="handleCancelDeleteLabel">No</el-button>
+                    <el-button type="primary" size="mini" @click="handleConfirmDeleteLabel(label, index)">Yes</el-button>
+                  </footer>
+                </el-popover>
+                <span v-show="!isEditLabel" class="nav-item-badge">{{ label.repos.length }}</span>
+              </li>
+            </transition-group>
+          </draggable>
+        </transition>
+        <transition name="slide-to-right">
+          <ul v-show="labelCategoryIndex === 1" class="nav-label label-list">
+            <li v-for="label of languageLabels" :key="label.id" :class="{ active: label.id === currentLabel.id }" class="nav-item" @click="handleToggleLabel(label)">
+              <label class="nav-item__label slo">
+                <i class="fa fa-fw fa-tag" aria-hidden="true"></i>
+                <span class="nav-item__name slo">{{ label.name }}</span>
+              </label>
+              <span v-show="!isEditLabel" class="nav-item-badge">{{ label.repos.length }}</span>
+            </li>
+          </ul>
+        </transition>
       </div>
+      <transition name="telescopic">
+        <div v-show="!customLabels.length && labelCategoryIndex === 0" class="no-label vc-p">
+          <i class="fa fa-hand-o-up fa-2x" aria-hidden="true"></i>
+          <p>添加标签</p>
+        </div>
+      </transition>
     </div>
+    <transition name="slide-up">
+      <ul v-show="!isEditLabel" class="label-category">
+        <li :style="categoryLabelSliderStyle" class="label-category__slider"></li>
+        <li v-for="(category, index) of labelCategorys" :key="category" :class="{ active: index === labelCategoryIndex }" class="label-category__item" @click="handleToggleLabelCategory(index)">{{ category }}</li>
+      </ul>
+    </transition>
     <footer class="sidebar-footer">
       <span>Author&nbsp;:&nbsp;</span>
-      <h1 class="author"><a href="https://github.com/Monine" target="_blank">Monine</a></h1>
+      <h1 class="author"><a href="https://github.com/Monine" target="_blank" class="author-name">Monine</a></h1>
     </footer>
   </section>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
-
 import config from '../config'
 import constants from '../constants'
+
+let isValidatedNewLabelName = false
+let dragLabelsClone = []
 
 const { norifyPosition } = config
 const { LABEL_NAME_CANNOT_ENPTY, LABEL_NAME_ALREADY_EXIST } = constants
@@ -81,7 +117,17 @@ const SAVE = 'save'
 const CANCEL = 'cancel'
 const FOCUS = 'focus'
 const BLUR = 'blur'
-let dragLabelsClone = []
+
+const tranformLabels = function tranformLabels (labels = {}) {
+  const dragLabels = JSON.parse(JSON.stringify(labels))
+
+  dragLabels.forEach((label, index) => {
+    label._isEdit = false
+    label._ref = `labelNameEditInput${label.id}`
+    label._preName = ''
+  })
+  return dragLabels
+}
 
 export default {
   name: 'sidebar',
@@ -89,8 +135,10 @@ export default {
   props: {
     starredReposLen: { type: Number, default: 0 },
     unlabeledReposLen: { type: Number, default: 0 },
-    labels: { type: Array, default: [] },
-    currentLabel: { type: Object, default: {} }
+    customLabels: { type: Array, default: [] },
+    languageLabels: { type: Array, default: [] },
+    currentLabel: { type: Object, default: {} },
+    labelCategoryIndex: { type: Number, default: 0 }
   },
   data () {
     return {
@@ -103,18 +151,24 @@ export default {
       labelNameInputState: FOCUS,
       labelNameBtnState: CANCEL,
       isEditLabel: false,
-      dragLabels: tranformLabels(this.labels)
+      dragLabels: tranformLabels(this.customLabels),
+      labelCategorys: ['自定义', '语言']
     }
   },
   computed: {
     dragOptions () {
+      return { disabled: !this.isEditLabel }
+    },
+    categoryLabelSliderStyle () {
+      const slidebarWidth = 100 / this.labelCategorys.length
       return {
-        disabled: !this.isEditLabel
+        left: `${this.labelCategoryIndex * slidebarWidth}%`,
+        width: `${slidebarWidth}%`
       }
     }
   },
   watch: {
-    labels: {
+    customLabels: {
       deep: true,
       handler (newVal) {
         this.dragLabels = tranformLabels(newVal)
@@ -122,7 +176,7 @@ export default {
     }
   },
   created () {
-    this.$emit('toggleLabel', this.defaultLabels[0])
+    this.$emit('toggleLabel', { label: this.defaultLabels[0] })
   },
   destroyed () {
     dragLabelsClone = []
@@ -130,7 +184,7 @@ export default {
   methods: {
     handleToggleLabel (label) {
       if (this.isEditLabel) return
-      this.$emit('toggleLabel', label)
+      this.$emit('toggleLabel', { label })
     },
     handleAddNewLabel () {
       if (this.isEditLabel || this.labelNameFormVisible) return
@@ -150,8 +204,9 @@ export default {
     handleAddLabel () {
       let message = ''
       const labelName = this.labelName.trim()
+
       if (!labelName) message = LABEL_NAME_CANNOT_ENPTY
-      if (this.labels.find(({ name }) => name === labelName)) message = LABEL_NAME_ALREADY_EXIST
+      if (this.customLabels.find(({ name }) => name === labelName)) message = LABEL_NAME_ALREADY_EXIST
       if (message) {
         this.$notify.warning({ message, showClose: false, position: norifyPosition })
         return this.$refs.labelFormNameInput.focus()
@@ -159,6 +214,7 @@ export default {
 
       this.$emit('saveNewLabel', labelName)
       this.labelNameFormVisible = false
+      this.labelNameBtnState = CANCEL
       this.labelName = ''
     },
     handleCancelAddLabel () {
@@ -184,38 +240,44 @@ export default {
     handleChangeLabelNameByBlur (label) {
       const $input = this.$refs[label._ref][0]
       const newLabelName = $input.value.trim()
-      if (!newLabelName) {
-        label.name = label._preName
-        label._isEdit = false
-        return
+
+      if (!isValidatedNewLabelName) {
+        if (!newLabelName) {
+          label.name = label._preName
+          label._isEdit = false
+          return
+        }
+
+        if (this.dragLabels.find(dragLabel => (dragLabel.name === newLabelName && dragLabel !== label))) {
+          this.$notify.warning({
+            message: LABEL_NAME_ALREADY_EXIST,
+            showClose: false,
+            position: norifyPosition
+          })
+          return $input.focus()
+        }
       }
 
-      if (this.dragLabels.find(dragLabel => (dragLabel.name === newLabelName && dragLabel !== label))) {
-        this.$notify.warning({ message: LABEL_NAME_ALREADY_EXIST, showClose: false, position: norifyPosition })
-        return $input.focus()
-      }
-
+      isValidatedNewLabelName = false
       label.name = newLabelName
       label._preName = ''
       label._isEdit = false
-      this.$emit('changeLabelName', { labelId: label.id, labelName: newLabelName })
+      this.$emit('changeLabelName', { id: label.id, name: newLabelName })
     },
     handleChangeLabelNameByEnter (label) {
       let message = ''
       const $input = this.$refs[label._ref][0]
       const newLabelName = $input.value.trim()
+
       if (!newLabelName) message = LABEL_NAME_CANNOT_ENPTY
       if (this.dragLabels.find(dragLabel => (dragLabel.name === newLabelName && dragLabel !== label))) message = LABEL_NAME_ALREADY_EXIST
-
       if (message) {
         this.$notify.warning({ message, showClose: false, position: norifyPosition })
         return $input.focus()
       }
 
-      label.name = newLabelName
-      label._preName = ''
-      label._isEdit = false
-      this.$emit('changeLabelName', { labelId: label.id, labelName: newLabelName })
+      isValidatedNewLabelName = true
+      $input.blur()
     },
     handleCancelEditLabelName (label) {
       label.name = label._preName
@@ -225,9 +287,8 @@ export default {
     handleDeleteLabel () {
       document.body.click()
     },
-    handleConfirmDeleteLabel (labelId, index) {
-      this.dragLabels.splice(index, 1)
-      this.$emit('deleteLabel', labelId)
+    handleConfirmDeleteLabel (label, index) {
+      this.$emit('deleteLabel', { index, label })
       document.body.click()
     },
     handleCancelDeleteLabel () {
@@ -244,20 +305,16 @@ export default {
           break
         }
       }
+      if (!isChanged) return
+
       const labels = this.dragLabels.map(({ id, name, repos }) => ({ id, name, repos }))
-      if (isChanged) this.$emit('completeEditLabels', labels)
+      this.$emit('completeEditLabels', labels)
+    },
+    handleToggleLabelCategory (index = 0) {
+      if (this.isEditLabel) return
+      this.$emit('toggleLabelCategory', { index })
     }
   }
-}
-
-function tranformLabels (labels = {}) {
-  const dragLabels = JSON.parse(JSON.stringify(labels))
-  dragLabels.forEach((label, index) => {
-    label._isEdit = false
-    label._ref = `labelNameEditInput${label.id}`
-    label._preName = ''
-  })
-  return dragLabels
 }
 </script>
 
@@ -312,7 +369,7 @@ function tranformLabels (labels = {}) {
 }
 
 .nav-item.active {
-  border-left-color: #108ee9;
+  border-left-color: #7265e6;
   border-bottom-color: transparent;
 }
 
@@ -350,15 +407,29 @@ function tranformLabels (labels = {}) {
 }
 
 .edit-label-tip {
+  overflow: hidden;
+  height: 24px;
   font-size: 12px;
+  line-height: 2;
   text-align: center;
-  padding: 5px;
   color: #919191;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.draggable-labels {
-  overflow: auto;
+.label-list__group {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: auto;
+  position: relative;
+}
+
+.label-list__group .label-list,
+.label-list__group .draggable-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .draggable-labels::-webkit-scrollbar-thumb {
@@ -398,13 +469,25 @@ function tranformLabels (labels = {}) {
   flex: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 12px;
+  transition: all 0.3s;
 }
 
 .nav-caption__title {
   flex: auto;
-  text-indent: 15px;
   font-size: 14px;
+  padding-left: 1em;
   color: #919191;
+  transition: all 0.3s;
+}
+
+.nav-caption__operate {
+  display: flex;
+  flex: 0 0 140px;
+}
+
+.nav-caption__group--edit-over {
+  display: flex;
+  flex: auto;
 }
 
 .nav-caption__operate-btn {
@@ -445,17 +528,6 @@ function tranformLabels (labels = {}) {
   height: 38px;
   font-size: 12px;
 }
-
-.slide-down-enter,
-.slide-down-leave-active {
-  height: 0;
-}
-
-.slide-down-enter-active,
-.slide-down-leave-active {
-  transition: height 0.2s ease-out;
-}
-
 .label-form__input--name {
   flex: auto;
   box-sizing: border-box;
@@ -464,7 +536,7 @@ function tranformLabels (labels = {}) {
   line-height: 1.5;
   outline: none;
   background-color: rgba(255, 255, 255, 0.1);
-  transition: color 0.3s, background-color 0.3s;
+  transition: all 0.3s;
 }
 
 .label-form__input--name:focus {
@@ -493,8 +565,7 @@ function tranformLabels (labels = {}) {
   color: #fff;
   cursor: pointer;
   outline: none;
-  transition: margin-left 0.3s ease-out 0.1s,
-    background-color 0.3s ease-out 0.1s;
+  transition: all 0.3s ease-out 0.1s;
 }
 
 .label-form__operate-btn.save {
@@ -537,7 +608,7 @@ function tranformLabels (labels = {}) {
 
 .fa-times-circle {
   font-size: 16px;
-  transition: transform 0.1s;
+  transition: all 0.1s;
   cursor: pointer;
 }
 
@@ -546,13 +617,13 @@ function tranformLabels (labels = {}) {
 }
 
 .label-list-enter,
-.label-list-level-active {
+.label-list-leave-active {
   transform: translateX(-100%);
 }
 
 .label-list-enter-active,
-.label-list-level-active {
-  transition: transform 0.3s;
+.label-list-leave-active {
+  transition: all 0.3s;
 }
 
 .no-label {
@@ -561,27 +632,74 @@ function tranformLabels (labels = {}) {
   color: #919191;
 }
 
+.label-category {
+  display: flex;
+  flex: 0 0 29px;
+  position: relative;
+  padding-left: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0;
+  font-size: 12px;
+  line-height: 30px;
+  text-align: center;
+  list-style: none;
+  text-indent: 5px;
+  letter-spacing: 5px;
+  color: #919191;
+  cursor: pointer;
+}
+
+.label-category__slider {
+  position: absolute;
+  height: 100%;
+  border-top: 1px solid #7265e6;
+  background-color: rgba(255, 255, 255, 0.07);
+  transition: all 0.2s;
+}
+
+.label-category__item {
+  width: 50%;
+  margin: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.label-category__item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.label-category__item.active {
+  color: #d9d9d9;
+}
+
+.label-category__item:last-child {
+  border-right: none;
+}
+
 .sidebar-footer {
+  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 0 0 30px;
-  border-top: 1px solid #7265e6;
+  flex: 0 0 29px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 14px;
   text-align: center;
-  color: #7265e6;
+  font-weight: 700;
+  color: #919191;
+  background-color: #28343d;
 }
 
 .author {
   font-size: inherit;
 }
+
+.author-name {
+  color: inherit;
+}
 </style>
 
 <style>
-#sidebar .sidebar-footer a {
-  color: #7265e6;
-}
-
 #appName a {
   color: #fff;
 }
