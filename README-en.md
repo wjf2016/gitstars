@@ -1,4 +1,4 @@
-[中文文档](https://github.com/Monine/gitstars)
+([中文文档](https://github.com/Monine/gitstars))
 
 As the developer's first social platform, github has countless outstanding open source projects that bring great convenience to work and study. Projects that you need or love are just a click away from Star.
 
@@ -6,7 +6,7 @@ Star is easy, but with stars repositories growing and passing, it's hard to reme
 
 So having your own github stars repositories manager is a must-have for developers.
 
-Previously used github stars repositories manager on the market, such as [Astral] (https://app.astralapp.com), although it can be used, but always feel awkward, not easy to use.
+Previously used github stars repositories manager on the market, such as [Astral](https://app.astralapp.com), although it can be used, but always feel awkward, not easy to use.
 
 Gitstars was born 🎉
 
