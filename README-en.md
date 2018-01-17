@@ -1,4 +1,4 @@
-([中文文档](https://github.com/Monine/gitstars))
+[中文文档](https://github.com/Monine/gitstars)
 
 As the developer's first social platform, github has countless outstanding open source projects that bring great convenience to work and study. Projects that you need or love are just a click away from Star.
 
