@@ -1,4 +1,4 @@
-[English document](https://github.com/Monine/gitstars/blob/master/READENE-en.md)
+[English document](https://github.com/Monine/gitstars/blob/master/README-en.md)
 
 Github 作为开发者的第一社交平台，拥有数不胜数的优秀开源项目，给工作和学习带来巨大方便，遇到自己需要或是喜爱的项目只需轻轻点击 Star 便可收入囊中。
 

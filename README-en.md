@@ -8,7 +8,7 @@ So having your own github stars repositories manager is a must-have for develope
 
 Previously used github stars repositories manager on the market, such as [Astral](https://app.astralapp.com), although it can be used, but always feel awkward, not easy to use.
 
-Gitstars was born 🎉
+Gitstars was born. 🎉
 
 Pure front-end implementation, no server and database, your github is everything.
 
