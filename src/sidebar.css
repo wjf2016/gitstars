@@ -90,6 +90,7 @@
 }
 .edit-tag-tip {
   overflow: hidden;
+  flex: none;
   height: 24px;
   font-size: 12px;
   line-height: 2;
@@ -283,7 +284,8 @@
 }
 .tag-category {
   display: flex;
-  flex: 0 0 29px;
+  flex: none;
+  height: 29px;
   position: relative;
   padding-left: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);

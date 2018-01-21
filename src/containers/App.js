@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Sidebar from './Sidebar'
+import Main from './Main'
 
 class App extends Component {
   componentWillMount () {
@@ -10,6 +11,7 @@ class App extends Component {
     return (
       <div id='app'>
         <Sidebar />
+        <Main />
       </div>
     )
   }

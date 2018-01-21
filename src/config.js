@@ -5,6 +5,7 @@ const clientSecret = isProduction ? '6fa564cbd46f6bdfa1fb81ddce5503dcbe4ab4c4' :
 export default {
   clientId,
   clientSecret,
+  accessToken: '142d4c119af2d4c6b5c9' + 'd159c1824ef2fa4be80f',
   filename: 'gitstars.json',
   description: `github stars manager for ${process.env.NODE_ENV}`,
   norifyPosition: 'bottom-right',

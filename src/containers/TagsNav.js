@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import TagsNav from './TagsNav'
-import { switchTag } from './reducers/active-tag'
+import TagsNav from '../components/TagsNav'
+import { switchTag } from '../reducers/active-tag'
 
 class TagsNavContainer extends Component {
   render () {

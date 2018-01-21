@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import DisplayCSSTransition from '../components/DisplayCSSTransition'
 
 const SAVE = 'save'
 const CANCEL = 'cancel'
@@ -32,6 +33,7 @@ class TagNameForm extends Component {
 
   handleChangeTagName (e) {
     const { value } = e.target
+
     this.setState({
       tagName: value,
       tagNameBtnState: value.trim().length ? SAVE : CANCEL
@@ -52,6 +54,7 @@ class TagNameForm extends Component {
 
   handleKeyUpTagName (e) {
     const { keyCode } = e
+
     if (keyCode === 13) { // enter
       this.handleAddTag()
     } else if (keyCode === 27) { // esc
@@ -70,8 +73,8 @@ class TagNameForm extends Component {
 
   render () {
     const {
-      props,
       state,
+      props,
       handleChangeTagName,
       handleFocusTagName,
       handleBlurTagName,
@@ -79,27 +82,28 @@ class TagNameForm extends Component {
       handleCancelAddTag,
       handleKeyUpTagName
     } = this
-    const { visible } = props
     const { tagName, tagNameInputState, tagNameBtnState } = state
 
     return (
-      visible &&
-      <form className='tag-form' onSubmit={e => e.preventDefault()}>
-        <input
-          value={tagName}
-          className={`tag-form__input--name ${tagNameInputState}`}
-          ref={input => (this.tagNameInput = input)}
-          type='text'
-          placeholder='tag name'
-          onChange={handleChangeTagName}
-          onFocus={handleFocusTagName}
-          onBlur={handleBlurTagName}
-          onKeyUp={handleKeyUpTagName} />
-        <div className={`tag-form__operate ${tagNameBtnState}`}>
-          <button type='button' className={`tag-form__operate-btn ${SAVE}`} onClick={handleAddTag}>{SAVE}</button>
-          <button type='button' className={`tag-form__operate-btn ${CANCEL}`} onClick={handleCancelAddTag}>{CANCEL}</button>
-        </div>
-      </form>
+      <DisplayCSSTransition in={props.visible} timeout={150} classNames='slide-down'>
+        <form className='tag-form' onSubmit={e => e.preventDefault()} >
+          <input
+            type='text'
+            value={tagName}
+            className={`tag-form__input--name ${tagNameInputState}`}
+            ref={input => (this.tagNameInput = input)}
+            placeholder='tag name'
+            onChange={handleChangeTagName}
+            onFocus={handleFocusTagName}
+            onBlur={handleBlurTagName}
+            onKeyUp={handleKeyUpTagName}
+          />
+          <div className={`tag-form__operate ${tagNameBtnState}`}>
+            <button type='button' className={`tag-form__operate-btn ${SAVE}`} onClick={handleAddTag}>{SAVE}</button>
+            <button type='button' className={`tag-form__operate-btn ${CANCEL}`} onClick={handleCancelAddTag}>{CANCEL}</button>
+          </div>
+        </form>
+      </DisplayCSSTransition>
     )
   }
 }

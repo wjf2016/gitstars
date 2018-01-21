@@ -1,22 +1,21 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
 
-export default class TagsNav extends Component {
+class TagsNav extends Component {
   render () {
     const { className, tags, activeTag, onSwitchTag } = this.props
 
     return (
-      <ul className={classNames({ 'nav-tag': true, [className]: !!className })}>
+      <ul className={`nav-tag ${className}`}>
         {
           tags.map(tag => {
             return (
               <li
-                className={classNames({ 'nav-item': true, active: tag.id === activeTag.id })}
+                className={`nav-item ${tag.id === activeTag.id ? 'active' : ''}`}
                 key={tag.id}
                 onClick={onSwitchTag.bind(this, tag)}>
                 <label className="nav-item__label">
-                  <i className={classNames({ fa: true, 'fa-fw': true, [tag.icon]: true })} aria-hidden></i>
+                  <i className={`fa fa-fw ${tag.icon ? tag.icon : 'fa-tag'}`} aria-hidden></i>
                   <span>{tag.name}</span>
                 </label>
               </li>
@@ -34,3 +33,9 @@ TagsNav.propTypes = {
   activeTag: PropTypes.object.isRequired,
   onSwitchTag: PropTypes.func.isRequired
 }
+
+TagsNav.defaultProps = {
+  className: ''
+}
+
+export default TagsNav
