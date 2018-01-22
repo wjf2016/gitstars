@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { switchActiveRepo } from '../reducers/active-repo'
+import { filterActiveReposByTag } from '../reducers/active-repos'
 import '../subsidebar.css'
 
 class SubSidebar extends Component {
@@ -15,6 +16,12 @@ class SubSidebar extends Component {
     this.handleChangeSearchValue = this.handleChangeSearchValue.bind(this)
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.activeTag.id !== this.props.activeTag.id) {
+      this.props.onFilterReposByTag(nextProps.activeTag)
+    }
+  }
+
   handleChangeSearchValue () {
 
   }
@@ -25,7 +32,7 @@ class SubSidebar extends Component {
 
   render () {
     const { props, state, handleChangeSearchValue, handleSwitchTag } = this
-    const { activeRepo, starredRepos, onSwitchRepo } = props
+    const { activeTag, activeRepo, activeRepos, onSwitchRepo } = props
     const { searchValue } = state
 
     return (
@@ -36,13 +43,13 @@ class SubSidebar extends Component {
             type='text'
             className='search-input'
             value={searchValue}
-            placeholder={activeRepo.name}
+            placeholder={activeTag.name}
             onChange={handleChangeSearchValue}
           />
         </label>
         <ul className='repo-list'>
           {
-            starredRepos.map(repo => (
+            activeRepos.map(repo => (
               <li
                 key={repo.id}
                 className={`repo-item ${repo.id === activeRepo.id ? 'active' : ''}`}
@@ -63,7 +70,7 @@ class SubSidebar extends Component {
                 <p className='repo-desc'>{repo.description}</p>
                 <ul className='tag-list'>
                   {
-                    repo._tags.custom.map(tag => (
+                    repo._customTags.map(tag => (
                       <li key={tag.id} className='tag-item' onClick={handleSwitchTag.bind(this, tag)}>
                         {tag.name}
                       </li>
@@ -79,72 +86,34 @@ class SubSidebar extends Component {
             ))
           }
         </ul>
-        {/* <ul v-show="repos.length" class="repo-list">
-        <li
-          v-for="repo in repos"
-          :key="repo.id"
-          :class="{ active: repo.id === activeRepoId }"
-          class="repo-item"
-          @click="handleSwitchRepo(repo)">
-          <header>
-            <h3 class="repo-title">
-              <a :href="repo.html_url" target="_blank">{{ repo.owner.login }} / {{ repo.name }}</a>
-              <a v-show="repo.homepage" :href="repo.homepage" target="_blank">
-                <i class="fa fa-fw fa-lg fa-home" aria-hidden="true"></i>
-              </a>
-            </h3>
-          </header>
-          <p class="repo-desc">{{ repo.description }}</p>
-          <ul class="tag-list">
-            <li
-              v-for="tag of repo._tags.custom"
-              :key="tag.id"
-              class="tag-item"
-              @click.stop="handleSwitchTag(tag)">
-              <el-tag size="small">
-                {{ tag.name }}
-                <el-popover :title="`${$t('areYouSure')}？`" placement="right">
-                  <i slot="reference" class="el-tag__close el-icon-close tag-delete-btn" @click.stop="handleDeleteTag"></i>
-                  <footer class="popover-footer">
-                    <el-button size="mini" @click="handleCancelDeleteTag">{{ $t('no') }}</el-button>
-                    <el-button type="primary" size="mini" @click="handleConfirmDeleteTag(repo.id, tag.id)">
-                      {{ $t('yes') }}
-                    </el-button>
-                  </footer>
-                </el-popover>
-              </el-tag>
-            </li>
-          </ul>
-          <footer class="repo-footer">
-            <span class="repo-star"><i class="fa fa-star" aria-hidden="true"></i>{{ repo.stargazers_count }}</span>
-            <span class="repo-fork"><i class="fa fa-code-fork" aria-hidden="true"></i>{{ repo.forks_count }}</span>
-            <span class="repo-language">{{ repo.language }}</span>
-          </footer>
-        </li>
-      </ul> */}
       </nav>
     )
   }
 }
 
 SubSidebar.propTypes = {
+  activeTag: PropTypes.object,
   activeRepo: PropTypes.object,
-  starredRepos: PropTypes.array,
-  onSwitchRepo: PropTypes.func.isRequired
+  activeRepos: PropTypes.array,
+  onSwitchRepo: PropTypes.func.isRequired,
+  onFilterReposByTag: PropTypes.func.isRequired
 }
 
 SubSidebar.defaultProps = {
+  activeTag: {},
   activeRepo: {},
-  starredRepos: []
+  activeRepos: []
 }
 
 const mapStateToProps = state => ({
+  activeTag: state.activeTag,
   activeRepo: state.activeRepo,
-  starredRepos: state.starredRepos
+  activeRepos: state.activeRepos
 })
 
 const mapDispatchToProps = dispatch => ({
-  onSwitchRepo: repo => dispatch(switchActiveRepo(repo))
+  onSwitchRepo: repo => dispatch(switchActiveRepo(repo)),
+  onFilterReposByTag: tag => dispatch(filterActiveReposByTag(tag))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(SubSidebar)

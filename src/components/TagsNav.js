@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 
 class TagsNav extends Component {
   render () {
-    const { className, tags, activeTag, onSwitchTag } = this.props
+    const { className, tags, activeTag, onSwitchTag, style } = this.props
 
     return (
-      <ul className={`nav-tag ${className}`}>
+      <ul className={`nav-tag ${className}`} style={style}>
         {
           tags.map(tag => {
             return (
@@ -18,6 +18,7 @@ class TagsNav extends Component {
                   <i className={`fa fa-fw ${tag.icon ? tag.icon : 'fa-tag'}`} aria-hidden></i>
                   <span>{tag.name}</span>
                 </label>
+                <span className='nav-item-badge'>{tag.repos.length}</span>
               </li>
             )
           })
@@ -31,7 +32,8 @@ TagsNav.propTypes = {
   className: PropTypes.string,
   tags: PropTypes.array.isRequired,
   activeTag: PropTypes.object.isRequired,
-  onSwitchTag: PropTypes.func.isRequired
+  onSwitchTag: PropTypes.func.isRequired,
+  style: PropTypes.object
 }
 
 TagsNav.defaultProps = {

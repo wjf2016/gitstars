@@ -8,15 +8,15 @@ export default {
   clientId,
   clientSecret,
   accessToken: `${access}${token}`,
-  gistId: '32224f536b177cfbb9e6f602fbdfb027',
+  gistId: '9193d95cdef7f9a017816e10adfc1724',
   filename: 'gitstars.json',
   description: `github stars manager for ${process.env.NODE_ENV}`,
   norifyPosition: 'bottom-right',
   starredReposPerPage: 100, // Github 最大值
   i18nLocaleKey: 'gitstars_i18n_local',
   defaultTags: {
-    all: { id: 0, name: '全部', i18nKey: 'allRepos', icon: 'fa-bars' },
-    untagged: { id: -1, name: '未标签', i18nKey: 'untaggedRepos', icon: 'fa-star-o' }
+    all: { id: 0, name: '全部', i18nKey: 'allRepos', icon: 'fa-bars', repos: [] },
+    untagged: { id: -1, name: '未标签', i18nKey: 'untaggedRepos', icon: 'fa-star-o', repos: [] }
   },
   tagCategorys: {
     custom: { id: 0, name: '自定义', i18nKey: 'custom' },

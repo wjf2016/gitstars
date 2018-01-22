@@ -104,8 +104,7 @@
   flex: auto;
   position: relative;
 }
-.tag-list__group .tag-list,
-.tag-list__group .draggable-tags {
+.tag-list__group .nav-tag {
   position: absolute;
   top: 0;
   left: 0;

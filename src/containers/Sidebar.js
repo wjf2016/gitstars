@@ -11,6 +11,7 @@ import appNamePng from '../assets/app-name.png'
 import config from '../config'
 import '../sidebar.css'
 
+const { tagCategorys } = config
 // let customTagsClone = []
 
 class Sidebar extends Component {
@@ -20,7 +21,7 @@ class Sidebar extends Component {
     this.state = {
       tagNameFormVisible: false,
       isEditTags: false,
-      activeTagCategory: config.tagCategorys.custom
+      activeTagCategory: tagCategorys.custom
     }
 
     this.handleToggleTagNameFormVisible = this.handleToggleTagNameFormVisible.bind(this)
@@ -63,7 +64,7 @@ class Sidebar extends Component {
       handleCancelAddTag,
       handleSwitchTagCategory
     } = this
-    const { customTags } = props
+    const { languageTags, customTags } = props
     const { tagNameFormVisible, isEditTags, activeTagCategory } = state
 
     return (
@@ -93,14 +94,29 @@ class Sidebar extends Component {
             <div className='edit-tag-tip'>tips</div>
           </DisplayCSSTransition>
           <div className='tag-list__group'>
-            <Draggable disabled={!isEditTags}>
-              <TagsNav className='custom-tags' tags={customTags} />
-            </Draggable>
+            <DisplayCSSTransition
+              in={activeTagCategory.id === tagCategorys.custom.id}
+              timeout={300}
+              classNames='slide-to-left'
+            >
+              <div>
+                <Draggable disabled={!isEditTags}>
+                  <TagsNav className='custom-tags' tags={customTags} />
+                </Draggable>
+              </div>
+            </DisplayCSSTransition>
+            <DisplayCSSTransition
+              in={activeTagCategory.id === tagCategorys.language.id}
+              timeout={300}
+              classNames='slide-to-right'
+            >
+              <TagsNav className='language-tags' tags={languageTags}></TagsNav>
+            </DisplayCSSTransition>
           </div>
         </div>
-        <DisplayCSSTransition in={!isEditTags && !tagNameFormVisible} timeout={150} classNames='slide-down'>
+        <DisplayCSSTransition in={!isEditTags && !tagNameFormVisible} timeout={300} classNames='slide-down'>
           <TagCategorys
-            categorys={Object.values(config.tagCategorys)}
+            categorys={Object.values(tagCategorys)}
             activeCategory={activeTagCategory}
             onSwitchCategory={handleSwitchTagCategory}
           />
@@ -117,6 +133,7 @@ class Sidebar extends Component {
 }
 
 Sidebar.propTypes = {
+  languageTags: PropTypes.array.isRequired,
   customTags: PropTypes.array.isRequired
 }
 

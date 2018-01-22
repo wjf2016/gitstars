@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Header from './Header'
 import SubSidebar from './SubSidebar'
-import MainBody from './MainBody'
+import RepoReadme from './RepoReadme'
 import '../main.css'
 
 class Main extends Component {
@@ -11,7 +11,7 @@ class Main extends Component {
         <Header />
         <div className="main-body">
           <SubSidebar />
-          <MainBody />
+          <RepoReadme />
         </div>
       </main>
     )

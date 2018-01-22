@@ -5,9 +5,11 @@ import axios from 'axios'
 import Sidebar from './Sidebar'
 import Main from './Main'
 import { initCustomTags } from '../reducers/custom-tags'
-import { initStarredRepos } from '../reducers/starred-repos'
+import { initActiveRepos } from '../reducers/active-repos'
 import { getStarredRepos, getGitstarsGist } from '../api'
 import config from '../config'
+
+const { gistId, starredReposPerPage, defaultTags } = config
 
 function loadStarredRepos (page = 1) {
   return new Promise(async (resolve, reject) => {
@@ -16,9 +18,9 @@ function loadStarredRepos (page = 1) {
 
     do {
       repos = await getStarredRepos(page++)
-      repos.forEach(repo => (repo._tags = { custom: [], language: [] }))
+      repos.forEach(repo => (repo._customTags = []))
       starredRepos.push(...repos)
-    } while (repos.length === config.starredReposPerPage)
+    } while (repos.length === starredReposPerPage)
     // this.loadStarredReposCompleted = true
     // resolve(this.starredRepos)
 
@@ -36,68 +38,78 @@ class App extends Component {
   }
 
   componentDidMount () {
+    let isCustomTagsFromLocalStorage = false
+
     /* eslint-disable no-new */
     new Promise(async (resolve, reject) => {
-      let gist = window.localStorage.getItem(config.gistId)
       let starredRepos = []
+      let gistContent = window.localStorage.getItem(gistId)
 
-      if (gist) {
-        // this.props.initCustomTags(JSON.parse(gist.tags))
+      if (gistContent) {
+        isCustomTagsFromLocalStorage = true
         starredRepos = await loadStarredRepos()
       } else {
-        await (axios.spread(async () => {
-          const [repos, { files }] = [...await axios.all([loadStarredRepos(), getGitstarsGist(config.gistId)])]
-          starredRepos = repos
-          gist = files[config.filename].content
-        }))()
+        let gist = {};
+        [starredRepos, gist] = await axios.all([loadStarredRepos(), getGitstarsGist(gistId)])
+        gistContent = gist.files[config.filename].content
       }
 
       return resolve({
         starredRepos,
-        customTags: JSON.parse(gist).tags
+        customTags: JSON.parse(gistContent).tags
       })
     }).then(({ customTags, starredRepos }) => {
+      const languageTags = []
       let dateNow = Date.now()
 
-      starredRepos.forEach(({ id: repoId, language, _tags }) => {
+      starredRepos.forEach(({ id: repoId, language }) => {
+        defaultTags.all.repos.push(repoId)
+
         if (!language) return
 
-        const { language: languageTags } = _tags
-        const tag = this.state.languageTags.find(tag => tag.name === language)
+        const tag = languageTags.find(tag => tag.name === language)
 
         if (tag) {
           tag.repos.push(repoId)
-          languageTags.push({ id: tag.id, name: tag.name })
         } else {
-          this.state.languageTags.push({ id: dateNow, name: language, repos: [repoId] })
-          languageTags.push({ id: dateNow, name: language })
+          languageTags.push({ id: dateNow, name: language, repos: [repoId] })
           dateNow += 1
         }
       })
 
-      this.props.initStarredRepos(starredRepos)
+      this.setState({ languageTags })
 
       customTags.forEach(tag => {
         tag.repos.forEach((repoId, index, repos) => {
-          const { _tags } = starredRepos.find(({ id }) => id === repoId) || {}
-          if (_tags) {
-            _tags.custom.push({ id: tag.id, name: tag.name })
+          const { _customTags } = starredRepos.find(({ id }) => id === repoId) || {}
+          if (_customTags) {
+            _customTags.push({ id: tag.id, name: tag.name })
           } else {
             // isIncludeInvalidId = true
             repos[index] = undefined
           }
         })
-        tag.repos = tag.repos.filter(repo => !!repo)
+        tag.repos = tag.repos.filter(repo => repo)
       })
 
+      defaultTags.untagged.repos = starredRepos.filter(repo => !repo._customTags.length).map(repo => repo.id)
+
+      this.props.initStarredRepos(starredRepos)
       this.props.initCustomTags(customTags)
+
+      if (!isCustomTagsFromLocalStorage) {
+        window.localStorage.setItem(gistId, JSON.stringify({
+          lastModified: Date.now(),
+          tags: customTags
+        }))
+      }
     })
   }
 
   render () {
     return (
       <div id='app'>
-        <Sidebar />
+        <Sidebar languageTags={this.state.languageTags} />
         <Main />
       </div>
     )
@@ -110,7 +122,7 @@ App.propTypes = {
 }
 
 const mapDispatchToProps = dispatch => ({
-  initStarredRepos: repos => dispatch(initStarredRepos(repos)),
+  initStarredRepos: repos => dispatch(initActiveRepos(repos)),
   initCustomTags: tags => dispatch(initCustomTags(tags))
 })
 
