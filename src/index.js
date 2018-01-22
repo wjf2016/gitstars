@@ -4,6 +4,7 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import App from './containers/App'
 import reducers from './reducers'
+import { getUserInfo } from './api'
 
 import 'normalize.css'
 import 'font-awesome/css/font-awesome.css'
@@ -13,9 +14,25 @@ import './app.css'
 
 const store = createStore(reducers)
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-)
+window._gitstars = {}
+
+/* eslint-disable no-new */
+new Promise(async (resolve, reject) => {
+  const GITSTARS_USER = 'gitstars_user'
+  let userInfo = window.localStorage.getItem(GITSTARS_USER)
+
+  if (userInfo) return resolve(JSON.parse(userInfo))
+
+  userInfo = await getUserInfo()
+  window.localStorage.setItem(GITSTARS_USER, JSON.stringify(userInfo))
+  resolve(userInfo)
+}).then(userInfo => {
+  window._gitstars.user = userInfo
+
+  render(
+    <Provider store={store}>
+      <App />
+    </Provider>,
+    document.getElementById('root')
+  )
+})

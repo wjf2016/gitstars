@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
-import TagNavHeaderBtn from '../components/TagNavHeaderBtn'
 import config from '../config'
 
 const { tagCategorys } = config
@@ -54,26 +53,24 @@ class TagNavHeader extends Component {
           classNames='slide-to-left'
         >
           <div className='nav-caption__operate'>
-            <TagNavHeaderBtn
-              className={isEditTags || tagNameFormVisible ? 'disabled' : undefined}
+            <div
+              className={`nav-caption__operate-btn ${isEditTags || tagNameFormVisible ? 'disabled' : ''}`}
               onClick={handleAddNewTag}
-              iconClassName=''
-              name='add'
-            />
+            >
+              <i className='fa fa-plus-square' aria-hidden></i>
+              add
+            </div>
             <DisplayCSSTransition in={!isEditTags} timeout={150} classNames='enlarge'>
-              <TagNavHeaderBtn
-                className={tagNameFormVisible || !customTags.length ? 'disabled' : undefined}
+              <div
+                className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.length ? 'disabled' : ''}`}
                 onClick={handleEditTags}
-                iconClassName='fa fa-cog'
-                name='edit'
-              />
+              >
+                <i className='fa fa-cog' aria-hidden></i>
+                edit
+              </div>
             </DisplayCSSTransition>
             <DisplayCSSTransition in={isEditTags} timeout={150} classNames='enlarge'>
-              <TagNavHeaderBtn
-                className='nav-caption__ok-btn'
-                onClick={handleCompleteEditTags}
-                name='ok'
-              />
+              <div className='nav-caption__operate-btn' onClick={handleCompleteEditTags}>ok</div>
             </DisplayCSSTransition>
           </div>
         </DisplayCSSTransition>

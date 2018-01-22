@@ -94,10 +94,7 @@ class Sidebar extends Component {
           </DisplayCSSTransition>
           <div className='tag-list__group'>
             <Draggable disabled={!isEditTags}>
-              <TagsNav
-                className={`custom-tags ${activeTagCategory.id === config.tagCategorys.custom.id ? '' : 'dn'}`}
-                tags={customTags}
-              />
+              <TagsNav className='custom-tags' tags={customTags} />
             </Draggable>
           </div>
         </div>

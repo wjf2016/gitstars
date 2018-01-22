@@ -1,10 +1,12 @@
 import { combineReducers } from 'redux'
 import activeTag from './active-tag'
-// import activeTagCategory from './active-tag-category'
 import customTags from './custom-tags'
+import starredRepos from './starred-repos'
+import activeRepo from './active-repo'
 
 export default combineReducers({
   activeTag,
-  // activeTagCategory,
-  customTags
+  customTags,
+  starredRepos,
+  activeRepo
 })
