@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { notification } from 'antd'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
+import { addCustomTag } from '../reducers/custom-tags'
 
 const SAVE = 'save'
 const CANCEL = 'cancel'
@@ -67,6 +69,14 @@ class TagNameForm extends Component {
 
       return this.tagNameInput.focus()
     }
+
+    this.props.onAddTag(tagName)
+    this.handleCancelAddTag()
+
+    // this.customTags.push({ name, id: Date.now(), repos: [] })
+    // saveGitstarsTags.call(this, {
+    //   message: `${this.$t('addTag')}: ${name}`
+    // }).catch(() => this.customTags.pop())
   }
 
   handleKeyUpTagName (e) {
@@ -128,7 +138,16 @@ class TagNameForm extends Component {
 TagNameForm.propTypes = {
   visible: PropTypes.bool.isRequired,
   customTags: PropTypes.array.isRequired,
+  onAddTag: PropTypes.func.isRequired,
   onCancelAddTag: PropTypes.func.isRequired
 }
 
-export default TagNameForm
+const mapStateToProps = state => ({
+  customTags: state.customTags
+})
+
+const mapDispatchToProps = dispatch => ({
+  onAddTag: tagName => dispatch(addCustomTag(tagName))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(TagNameForm)
