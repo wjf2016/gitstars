@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { notification } from 'antd'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
 
 const SAVE = 'save'
@@ -49,7 +50,23 @@ class TagNameForm extends Component {
   }
 
   handleAddTag () {
+    const tagName = this.state.tagName.trim()
+    let description = ''
 
+    if (!tagName) description = '不能为空'
+
+    if (this.props.customTags.find(tag => tag.name === tagName)) {
+      description = '已存在'
+    }
+
+    if (description) {
+      notification.warning({
+        description,
+        message: 'aaa'
+      })
+
+      return this.tagNameInput.focus()
+    }
   }
 
   handleKeyUpTagName (e) {
@@ -110,6 +127,7 @@ class TagNameForm extends Component {
 
 TagNameForm.propTypes = {
   visible: PropTypes.bool.isRequired,
+  customTags: PropTypes.array.isRequired,
   onCancelAddTag: PropTypes.func.isRequired
 }
 

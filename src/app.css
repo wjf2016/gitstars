@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: content-box;
+}
+
 #root {
   height: 100%;
 }
@@ -19,4 +25,9 @@
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
   background-color: #bfbfbf;
+}
+
+.ant-notification-notice-icon {
+  top: 50%;
+  margin-top: -12px;
 }

@@ -88,6 +88,7 @@ class Sidebar extends Component {
           />
           <NewTagNameForm
             visible={tagNameFormVisible}
+            customTags={customTags}
             onCancelAddTag={handleCancelAddTag}
           />
           <DisplayCSSTransition in={isEditTags} timeout={150} classNames='slide-down'>

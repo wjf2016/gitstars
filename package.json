@@ -7,13 +7,13 @@
   "author": "monine <bob.zhouxiang@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env PORT=7909 react-scripts start",
-    "build": "react-scripts build"
+    "start": "cross-env PORT=7909 react-app-rewired start",
+    "build": "react-app-rewired build"
   },
   "dependencies": {
+    "antd": "3.1.4",
     "axios": "0.17.1",
     "font-awesome": "4.7.0",
-    "normalize.css": "7.0.0",
     "prop-types": "15.6.0",
     "react": "16.2.0",
     "react-dom": "16.2.0",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "babel-eslint": "8.2.1",
+    "babel-plugin-import": "1.6.3",
     "cross-env": "5.1.3",
     "eslint": "4.15.0",
     "eslint-config-standard": "^11.0.0-beta.0",
@@ -32,6 +33,7 @@
     "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-react": "7.5.1",
     "eslint-plugin-standard": "^3.0.1",
+    "react-app-rewired": "1.4.0",
     "react-scripts": "1.1.0"
   }
 }

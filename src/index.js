@@ -2,15 +2,21 @@ import React from 'react'
 import { render } from 'react-dom'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
+import { notification } from 'antd'
 import App from './containers/App'
 import reducers from './reducers'
 import { getUserInfo } from './api'
 
-import 'normalize.css'
 import 'font-awesome/css/font-awesome.css'
 import './base.css'
 import './transition.css'
 import './app.css'
+
+notification.config({
+  placement: 'bottomRight',
+  bottom: 30,
+  duration: 0
+})
 
 const store = createStore(reducers)
 
