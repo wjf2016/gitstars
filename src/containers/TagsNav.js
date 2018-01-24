@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { List } from 'immutable'
 import TagsNav from '../components/TagsNav'
 import { switchTag } from '../reducers/active-tag'
 
@@ -13,7 +14,10 @@ class TagsNavContainer extends Component {
 }
 
 TagsNavContainer.propTypes = {
-  tags: PropTypes.array,
+  tags: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.instanceOf(List)
+  ]).isRequired,
   activeTag: PropTypes.object,
   onSwitchTag: PropTypes.func
 }

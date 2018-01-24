@@ -30,7 +30,7 @@ axios.interceptors.response.use(({ data }) => {
   return Promise.reject(err)
 })
 
-const { filename, description, starredReposPerPage } = config
+const { filename, description, starredReposPerPage, gistId } = config
 
 // https://developer.github.com/v3/users/#get-the-authenticated-user
 export const getUserInfo = () => axios.get(`/user`)
@@ -76,11 +76,11 @@ export const getRenderedReadme = data => {
 }
 
 // https://developer.github.com/v3/gists/
-export const saveGitstarsGist = (id, content) => {
-  return axios.patch(`/gists/${id}`, {
+export const saveGitstarsGist = (tags) => {
+  return axios.patch(`/gists/${gistId}`, {
     files: {
       [filename]: {
-        content: JSON.stringify(content)
+        content: JSON.stringify({ lastModified: Date.now(), tags })
       }
     }
   })

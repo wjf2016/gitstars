@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { List } from 'immutable'
 import Draggable from 'react-draggable'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
 import TagsNav from './TagsNav'
@@ -134,7 +135,7 @@ class Sidebar extends Component {
 
 Sidebar.propTypes = {
   languageTags: PropTypes.array.isRequired,
-  customTags: PropTypes.array.isRequired
+  customTags: PropTypes.instanceOf(List).isRequired
 }
 
 const mapStateToProps = state => ({

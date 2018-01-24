@@ -1,7 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
+import ReduxThunk from 'redux-thunk'
 import { notification } from 'antd'
 import App from './containers/App'
 import reducers from './reducers'
@@ -18,7 +19,10 @@ notification.config({
   duration: 0
 })
 
-const store = createStore(reducers)
+const store = createStore(
+  reducers,
+  applyMiddleware(ReduxThunk)
+)
 
 window._gitstars = {}
 

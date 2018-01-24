@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { List } from 'immutable'
 import { notification } from 'antd'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
-import { addCustomTag } from '../reducers/custom-tags'
+import { addCustomTag, updateCustomTags } from '../reducers/custom-tags'
 
 const SAVE = 'save'
 const CANCEL = 'cancel'
@@ -64,13 +65,30 @@ class TagNameForm extends Component {
     if (description) {
       notification.warning({
         description,
-        message: 'aaa'
+        message: '添加自定义标签失败'
       })
 
       return this.tagNameInput.focus()
     }
 
-    this.props.onAddTag(tagName)
+    notification.info({
+      icon: <i className="fa fa-cog fa-spin fa-fw"></i>,
+      message: '正在更新',
+      description: '请稍后...',
+      duration: 0
+    })
+
+    // const gitstars = { lastModified: Date.now(), tags: [...this.props.customTags, { id: Date.now(), name: tagName, repos: [] }] }
+    this.props.onAddTag({ id: Date.now(), name: tagName, repos: [] })
+
+    // saveGitstarsGist(gitstars).then(gist => {
+    //   notification.success({
+    //     message: '更新成功',
+    //     description: 'hhh'
+    //   })
+    //   window.localStorage.setItem(config.gistId, JSON.stringify(gitstars))
+    // })
+
     this.handleCancelAddTag()
 
     // this.customTags.push({ name, id: Date.now(), repos: [] })
@@ -137,7 +155,7 @@ class TagNameForm extends Component {
 
 TagNameForm.propTypes = {
   visible: PropTypes.bool.isRequired,
-  customTags: PropTypes.array.isRequired,
+  customTags: PropTypes.instanceOf(List).isRequired,
   onAddTag: PropTypes.func.isRequired,
   onCancelAddTag: PropTypes.func.isRequired
 }
@@ -147,7 +165,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onAddTag: tagName => dispatch(addCustomTag(tagName))
+  onAddTag: tag => dispatch(updateCustomTags(tag, addCustomTag))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagNameForm)

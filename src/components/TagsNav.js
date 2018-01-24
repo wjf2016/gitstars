@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { List } from 'immutable'
 
 class TagsNav extends Component {
   render () {
@@ -30,7 +31,10 @@ class TagsNav extends Component {
 
 TagsNav.propTypes = {
   className: PropTypes.string,
-  tags: PropTypes.array.isRequired,
+  tags: PropTypes.oneOfType([
+    PropTypes.array,
+    PropTypes.instanceOf(List)
+  ]).isRequired,
   activeTag: PropTypes.object.isRequired,
   onSwitchTag: PropTypes.func.isRequired,
   style: PropTypes.object

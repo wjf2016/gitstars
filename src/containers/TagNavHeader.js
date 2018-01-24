@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { List } from 'immutable'
 import DisplayCSSTransition from '../components/DisplayCSSTransition'
 import config from '../config'
 
@@ -86,7 +87,7 @@ TagNavHeader.propTypes = {
   isEditTags: PropTypes.bool.isRequired,
   onEditTags: PropTypes.func.isRequired,
   onEditTagsComplete: PropTypes.func.isRequired,
-  customTags: PropTypes.array.isRequired
+  customTags: PropTypes.instanceOf(List).isRequired
 }
 
 export default TagNavHeader

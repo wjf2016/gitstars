@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { List } from 'immutable'
 import axios from 'axios'
 import Sidebar from './Sidebar'
 import Main from './Main'
@@ -18,7 +19,7 @@ function loadStarredRepos (page = 1) {
 
     do {
       repos = await getStarredRepos(page++)
-      repos.forEach(repo => (repo._customTags = []))
+      repos.forEach(repo => (repo._customTags = List()))
       starredRepos.push(...repos)
     } while (repos.length === starredReposPerPage)
     // this.loadStarredReposCompleted = true
