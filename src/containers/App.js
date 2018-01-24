@@ -55,36 +55,36 @@ class App extends Component {
         gistContent = gist.files[config.filename].content
       }
 
-      return resolve({
-        starredRepos,
-        customTags: JSON.parse(gistContent).tags
-      })
-    }).then(({ customTags, starredRepos }) => {
+      return resolve({ starredRepos, gistContent })
+    }).then(({ starredRepos, gistContent }) => {
+      const { tags: customTags } = JSON.parse(gistContent)
       const languageTags = []
       let dateNow = Date.now()
 
+      console.time('init language tags')
       starredRepos.forEach(({ id: repoId, language }) => {
         defaultTags.all.repos.push(repoId)
 
         if (!language) return
 
-        const tag = languageTags.find(tag => tag.name === language)
-
-        if (tag) {
-          tag.repos.push(repoId)
+        const languageTag = languageTags.find(tag => tag.name === language)
+        if (languageTag) {
+          languageTag.repos.push(repoId)
         } else {
           languageTags.push({ id: dateNow, name: language, repos: [repoId] })
           dateNow += 1
         }
       })
+      console.timeEnd('init language tags')
 
       this.setState({ languageTags })
 
+      console.time('init starred repositories custom tags')
       customTags.forEach(tag => {
         tag.repos.forEach((repoId, index, repos) => {
-          const { _customTags } = starredRepos.find(({ id }) => id === repoId) || {}
-          if (_customTags) {
-            _customTags.push({ id: tag.id, name: tag.name })
+          const repo = starredRepos.find(({ id }) => id === repoId)
+          if (repo) {
+            repo._customTags = repo._customTags.push({ id: tag.id, name: tag.name })
           } else {
             // isIncludeInvalidId = true
             repos[index] = undefined
@@ -92,17 +92,15 @@ class App extends Component {
         })
         tag.repos = tag.repos.filter(repo => repo)
       })
+      console.timeEnd('init starred repositories custom tags')
 
-      defaultTags.untagged.repos = starredRepos.filter(repo => !repo._customTags.length).map(repo => repo.id)
+      defaultTags.untagged.repos = starredRepos.filter(repo => !repo._customTags.size).map(repo => repo.id)
 
       this.props.initStarredRepos(starredRepos)
       this.props.initCustomTags(customTags)
 
       if (!isCustomTagsFromLocalStorage) {
-        window.localStorage.setItem(gistId, JSON.stringify({
-          lastModified: Date.now(),
-          tags: customTags
-        }))
+        window.localStorage.setItem(gistId, gistContent)
       }
     })
   }

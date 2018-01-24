@@ -13,11 +13,7 @@ import './base.css'
 import './transition.css'
 import './app.css'
 
-notification.config({
-  placement: 'bottomRight',
-  bottom: 30,
-  duration: 0
-})
+notification.config({ placement: 'bottomRight' })
 
 const store = createStore(
   reducers,

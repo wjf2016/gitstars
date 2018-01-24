@@ -71,30 +71,15 @@ class TagNameForm extends Component {
       return this.tagNameInput.focus()
     }
 
-    notification.info({
-      icon: <i className="fa fa-cog fa-spin fa-fw"></i>,
-      message: '正在更新',
-      description: '请稍后...',
-      duration: 0
-    })
-
-    // const gitstars = { lastModified: Date.now(), tags: [...this.props.customTags, { id: Date.now(), name: tagName, repos: [] }] }
     this.props.onAddTag({ id: Date.now(), name: tagName, repos: [] })
-
-    // saveGitstarsGist(gitstars).then(gist => {
-    //   notification.success({
-    //     message: '更新成功',
-    //     description: 'hhh'
-    //   })
-    //   window.localStorage.setItem(config.gistId, JSON.stringify(gitstars))
-    // })
+      .then(_ => {
+        notification.success({
+          message: '更新成功',
+          description: `添加标签：${tagName}`
+        })
+      })
 
     this.handleCancelAddTag()
-
-    // this.customTags.push({ name, id: Date.now(), repos: [] })
-    // saveGitstarsTags.call(this, {
-    //   message: `${this.$t('addTag')}: ${name}`
-    // }).catch(() => this.customTags.pop())
   }
 
   handleKeyUpTagName (e) {
@@ -165,7 +150,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onAddTag: tag => dispatch(updateCustomTags(tag, addCustomTag))
+  onAddTag: tag => dispatch(updateCustomTags(addCustomTag(tag)))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagNameForm)

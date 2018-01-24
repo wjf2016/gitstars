@@ -1,4 +1,6 @@
+import React from 'react'
 import { List } from 'immutable'
+import { notification } from 'antd'
 import { saveGitstarsGist } from '../api'
 import config from '../config'
 
@@ -9,7 +11,7 @@ const DELETE_CUSTOM_TAG = 'DELETE_CUSTOM_TAG'
 const ADD_CUSTOM_TAG_REPO = 'ADD_CUSTOM_TAG_REPO'
 const DELETE_CUSTOM_TAG_REPO = 'DELETE_CUSTOM_TAG_REPO'
 
-export default function customTags (state = List(), action) {
+export default function customTagsReducer (state = List(), action) {
   switch (action.type) {
     case INIT_CUSTOM_TAGS:
       return List(action.tags)
@@ -25,7 +27,7 @@ export default function customTags (state = List(), action) {
         state.get(action.tagIndex).repos.push(action.id)
       )
     case DELETE_CUSTOM_TAG_REPO:
-      return state.deleteIn([action.tagIndex, action.repoIndex])
+      return state.deleteIn([action.tagIndex, 'repos', action.repoIndex])
     default:
       return state
   }
@@ -38,22 +40,24 @@ export const deleteCustomTag = index => ({ index, type: DELETE_CUSTOM_TAG })
 export const addCustomTagRepo = (tagIndex, id) => ({ tagIndex, id, type: ADD_CUSTOM_TAG_REPO })
 export const deleteCustomTagRepo = (tagIndex, repoIndex) => ({ tagIndex, repoIndex, type: DELETE_CUSTOM_TAG_REPO })
 
-export const updateCustomTags = (tag, action) => (dispatch, getState) => {
+export const updateCustomTags = action => (dispatch, getState) => {
+  const DateNow = Date.now()
+  notification.info({
+    key: DateNow,
+    icon: <i className="fa fa-cog fa-spin fa-fw"></i>,
+    message: '正在更新',
+    description: '请稍后...',
+    duration: 0
+  })
+
   const { customTags } = getState()
-  let newCustomTags = customTags
-  action = action(tag)
+  const newCustomTags = customTagsReducer(customTags, action)
 
-  switch (action.type) {
-    case ADD_CUSTOM_TAG:
-      newCustomTags = newCustomTags.push(tag)
-      break
-    default:
-      newCustomTags = customTags
-      break
-  }
+  dispatch(action)
 
-  console.log(newCustomTags)
-
-  return saveGitstarsGist(newCustomTags)
-    .then(_ => dispatch(action))
+  const gist = { lastModified: DateNow, tags: newCustomTags }
+  return saveGitstarsGist(gist)
+    .then(_ => notification.close(DateNow))
+    .then(_ => window.localStorage.setItem(config.gistId, JSON.stringify(gist)))
+    .catch(_ => dispatch(initCustomTags(customTags)))
 }

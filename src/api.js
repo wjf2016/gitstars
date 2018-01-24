@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import { Notification } from 'element-ui'
+import { notification } from 'antd'
 import config from './config'
 
 axios.defaults.baseURL = 'https://api.github.com'
@@ -9,6 +9,7 @@ axios.interceptors.request.use(reqConfig => {
 
   reqConfig.url += reqConfig.url.includes('?') ? '&' : '?'
   reqConfig.url += `access_token=${config.accessToken}`
+
   return reqConfig
 }, err => {
   return Promise.reject(err)
@@ -17,16 +18,17 @@ axios.interceptors.request.use(reqConfig => {
 axios.interceptors.response.use(({ data }) => {
   return data
 }, err => {
-  let message = err.message
+  let description = err.message
   const { response = {} } = err
-  const { status, statusText, data } = response
+  const { status, statusText } = response
 
-  if (data) message = data.message
-  // Notification.error({
-  //   message,
-  //   title: `${status} ${statusText}`,
-  //   showClose: false
-  // })
+  notification.error({
+    description,
+    message: `${status} ${statusText}`,
+    placement: 'topRight',
+    duration: 0
+  })
+
   return Promise.reject(err)
 })
 
