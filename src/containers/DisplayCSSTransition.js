@@ -5,25 +5,21 @@ import { CSSTransition } from 'react-transition-group'
 class DisplayCSSTransition extends Component {
   constructor (props) {
     super(props)
-
     this.state = { isWillShow: false, isShow: props.in }
-
-    this.handleEnter = this.handleEnter.bind(this)
-    this.handleExited = this.handleExited.bind(this)
   }
 
   componentWillReceiveProps ({ in: isWillShow }) {
     if (isWillShow !== this.props.in) this.setState({ isWillShow })
   }
 
-  handleEnter () {
+  handleEnter = _ => {
     this.setState({ isShow: true })
 
     const { onEnter } = this.props
     if (onEnter) onEnter()
   }
 
-  handleExited () {
+  handleExited = _ => {
     this.setState({ isShow: false })
 
     const { onExited } = this.props

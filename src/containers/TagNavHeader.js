@@ -1,28 +1,20 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { List } from 'immutable'
-import DisplayCSSTransition from '../components/DisplayCSSTransition'
+import DisplayCSSTransition from './DisplayCSSTransition'
 import config from '../config'
 
 const { tagCategorys } = config
 
 class TagNavHeader extends Component {
-  constructor (props) {
-    super(props)
-
-    this.handleAddNewTag = this.handleAddNewTag.bind(this)
-    this.handleEditTags = this.handleEditTags.bind(this)
-    this.handleCompleteEditTags = this.handleCompleteEditTags.bind(this)
-  }
-
-  handleAddNewTag () {
+  handleAddNewTag = _ => {
     const { tagNameFormVisible, isEditTags, onToggleTagNameFormVisible } = this.props
     if (isEditTags || tagNameFormVisible) return
 
     onToggleTagNameFormVisible()
   }
 
-  handleEditTags () {
+  handleEditTags = _ => {
     const { tagNameFormVisible, customTags, onEditTags } = this.props
     if (tagNameFormVisible || !customTags.length) return
 
@@ -32,9 +24,8 @@ class TagNavHeader extends Component {
     // this.$emit('editTags')
   }
 
-  handleCompleteEditTags () {
+  handleCompleteEditTags = _ => {
     const { onEditTagsComplete } = this.props
-
     onEditTagsComplete()
   }
 
@@ -63,7 +54,7 @@ class TagNavHeader extends Component {
             </div>
             <DisplayCSSTransition in={!isEditTags} timeout={150} classNames='enlarge'>
               <div
-                className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.length ? 'disabled' : ''}`}
+                className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.size ? 'disabled' : ''}`}
                 onClick={handleEditTags}
               >
                 <i className='fa fa-cog' aria-hidden></i>

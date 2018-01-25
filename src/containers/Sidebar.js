@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { List } from 'immutable'
-import Draggable from 'react-draggable'
-import DisplayCSSTransition from '../components/DisplayCSSTransition'
+import DisplayCSSTransition from './DisplayCSSTransition'
 import TagsNav from './TagsNav'
 import TagNavHeader from './TagNavHeader'
 import NewTagNameForm from './NewTagNameForm'
-import TagCategorys from './TagCategorys'
+import TagCategorys from '../components/TagCategorys'
 import appNamePng from '../assets/app-name.png'
 import config from '../config'
 import '../sidebar.css'
@@ -24,34 +23,28 @@ class Sidebar extends Component {
       isEditTags: false,
       activeTagCategory: tagCategorys.custom
     }
-
-    this.handleToggleTagNameFormVisible = this.handleToggleTagNameFormVisible.bind(this)
-    this.handleEditTags = this.handleEditTags.bind(this)
-    this.handleEditTagsComplete = this.handleEditTagsComplete.bind(this)
-    this.handleCancelAddTag = this.handleCancelAddTag.bind(this)
-    this.handleSwitchTagCategory = this.handleSwitchTagCategory.bind(this)
   }
 
-  handleToggleTagNameFormVisible () {
+  handleToggleTagNameFormVisible = _ => {
     this.setState((prevState, props) => ({
       tagNameFormVisible: !prevState.tagNameFormVisible
     }))
   }
 
-  handleEditTags () {
+  handleEditTags = _ => {
     this.setState({ isEditTags: true })
     // customTagsClone = JSON.parse(JSON.stringify(this.props.customTags))
   }
 
-  handleEditTagsComplete () {
+  handleEditTagsComplete = _ => {
     this.setState({ isEditTags: false })
   }
 
-  handleCancelAddTag () {
+  handleCancelAddTag = _ => {
     this.setState({ tagNameFormVisible: false })
   }
 
-  handleSwitchTagCategory (category) {
+  handleSwitchTagCategory = category => {
     this.setState({ activeTagCategory: category })
   }
 
@@ -101,9 +94,7 @@ class Sidebar extends Component {
               classNames='slide-to-left'
             >
               <div>
-                <Draggable disabled={!isEditTags}>
-                  <TagsNav className='custom-tags' tags={customTags} />
-                </Draggable>
+                <TagsNav className='custom-tags' tags={customTags} />
               </div>
             </DisplayCSSTransition>
             <DisplayCSSTransition

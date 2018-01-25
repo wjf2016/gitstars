@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { List } from 'immutable'
 import { notification } from 'antd'
-import DisplayCSSTransition from '../components/DisplayCSSTransition'
+import DisplayCSSTransition from './DisplayCSSTransition'
 import { addCustomTag, updateCustomTags } from '../reducers/custom-tags'
 
 const SAVE = 'save'
@@ -14,19 +14,11 @@ const BLUR = 'blur'
 class TagNameForm extends Component {
   constructor (props) {
     super(props)
-
     this.state = {
       tagName: '',
       tagNameInputState: FOCUS,
       tagNameBtnState: CANCEL
     }
-
-    this.handleChangeTagName = this.handleChangeTagName.bind(this)
-    this.handleFocusTagName = this.handleFocusTagName.bind(this)
-    this.handleBlurTagName = this.handleBlurTagName.bind(this)
-    this.handleAddTag = this.handleAddTag.bind(this)
-    this.handleCancelAddTag = this.handleCancelAddTag.bind(this)
-    this.handleKeyUpTagName = this.handleKeyUpTagName.bind(this)
   }
 
   componentDidUpdate (prevProps, prevState) {
@@ -35,7 +27,7 @@ class TagNameForm extends Component {
     }
   }
 
-  handleChangeTagName (e) {
+  handleChangeTagName = e => {
     const { value } = e.target
 
     this.setState({
@@ -44,19 +36,21 @@ class TagNameForm extends Component {
     })
   }
 
-  handleFocusTagName () {
+  handleFocusTagName = _ => {
     this.setState({ tagNameInputState: FOCUS })
   }
 
-  handleBlurTagName () {
+  handleBlurTagName = _ => {
     this.setState({ tagNameInputState: BLUR })
   }
 
-  handleAddTag () {
+  handleAddTag = _ => {
     const tagName = this.state.tagName.trim()
     let description = ''
 
-    if (!tagName) description = '不能为空'
+    if (!tagName) {
+      description = '不能为空'
+    }
 
     if (this.props.customTags.find(tag => tag.name === tagName)) {
       description = '已存在'
@@ -65,7 +59,7 @@ class TagNameForm extends Component {
     if (description) {
       notification.warning({
         description,
-        message: '添加自定义标签失败'
+        message: '添加标签失败'
       })
 
       return this.tagNameInput.focus()
@@ -82,7 +76,7 @@ class TagNameForm extends Component {
     this.handleCancelAddTag()
   }
 
-  handleKeyUpTagName (e) {
+  handleKeyUpTagName = e => {
     const { keyCode } = e
 
     if (keyCode === 13) { // enter
@@ -92,12 +86,8 @@ class TagNameForm extends Component {
     }
   }
 
-  handleCancelAddTag () {
-    this.setState({
-      tagName: '',
-      tagNameBtnState: CANCEL
-    })
-
+  handleCancelAddTag = _ => {
+    this.setState({ tagName: '', tagNameBtnState: CANCEL })
     this.props.onCancelAddTag()
   }
 

@@ -2,16 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 class TagCategorys extends Component {
-  handleSwitchTagCategory (category) {
-    this.props.onSwitchCategory(category)
-  }
-
   render () {
-    const {
-      categorys,
-      activeCategory,
-      style
-    } = this.props
+    const { categorys, activeCategory, style, onSwitchCategory } = this.props
 
     const values = Object.values(categorys)
     const slidebarWidth = 100 / values.length
@@ -25,16 +17,14 @@ class TagCategorys extends Component {
       <ul className='tag-category' style={style}>
         <li className="tag-category__slider" style={slidebarStyle}></li>
         {
-          categorys.map(category => {
-            return (
-              <li
-                key={category.id}
-                className={`tag-category__item ${category.id === activeCategory.id ? 'active' : ''}`}
-                onClick={this.handleSwitchTagCategory.bind(this, category)}>
-                {category.name}
-              </li>
-            )
-          })
+          categorys.map(category => (
+            <li
+              key={category.id}
+              className={`tag-category__item ${category.id === activeCategory.id ? 'active' : ''}`}
+              onClick={_ => onSwitchCategory(category)}>
+              {category.name}
+            </li>
+          ))
         }
       </ul>
     )

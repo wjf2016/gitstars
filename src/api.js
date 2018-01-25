@@ -78,11 +78,11 @@ export const getRenderedReadme = data => {
 }
 
 // https://developer.github.com/v3/gists/
-export const saveGitstarsGist = (tags) => {
+export const saveGitstarsGist = (content) => {
   return axios.patch(`/gists/${gistId}`, {
     files: {
       [filename]: {
-        content: JSON.stringify({ lastModified: Date.now(), tags })
+        content: JSON.stringify(content)
       }
     }
   })
