@@ -10,8 +10,9 @@ import { getUserInfo } from './api'
 
 import 'font-awesome/css/font-awesome.css'
 import './base.css'
-import './transition.css'
 import './app.css'
+import './sidebar.css'
+import './transition.css'
 
 notification.config({ placement: 'bottomRight' })
 

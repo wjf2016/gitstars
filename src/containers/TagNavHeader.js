@@ -1,42 +1,56 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { List } from 'immutable'
+import { notification } from 'antd'
 import DisplayCSSTransition from './DisplayCSSTransition'
+import { updateCustomTags } from '../reducers/custom-tags'
 import config from '../config'
 
 const { tagCategorys } = config
+let customTagsClone = null
 
 class TagNavHeader extends Component {
   handleAddNewTag = _ => {
-    const { tagNameFormVisible, isEditTags, onToggleTagNameFormVisible } = this.props
-    if (isEditTags || tagNameFormVisible) return
+    const { tagNameFormVisible, isEditingTags, onToggleTagNameFormVisible } = this.props
+    if (isEditingTags || tagNameFormVisible) return
 
     onToggleTagNameFormVisible()
   }
 
   handleEditTags = _ => {
     const { tagNameFormVisible, customTags, onEditTags } = this.props
-    if (tagNameFormVisible || !customTags.length) return
+    if (tagNameFormVisible || !customTags.size) return
 
+    customTagsClone = customTags
     onEditTags()
-
-    // customTagsClone = JSON.parse(JSON.stringify(this.customTags))
-    // this.$emit('editTags')
   }
 
-  handleCompleteEditTags = _ => {
-    const { onEditTagsComplete } = this.props
+  handleEditTagsComplete = _ => {
+    const { customTags, onEditTagsComplete, updateCustomTags } = this.props
     onEditTagsComplete()
+
+    if (customTags.equals(customTagsClone)) return
+
+    customTagsClone = null
+
+    updateCustomTags()
+      .then(_ => {
+        notification.success({
+          message: '更新成功',
+          description: '编辑标签完成'
+        })
+      })
   }
 
   render () {
-    const { props, handleAddNewTag, handleCompleteEditTags, handleEditTags } = this
-    const { activeTagCategory, tagNameFormVisible, isEditTags, customTags } = props
+    const { props, handleAddNewTag, handleEditTagsComplete, handleEditTags } = this
+    const { activeTagCategory, tagNameFormVisible, isEditingTags, customTags } = props
 
     return (
       <header className='nav-caption'>
         <h3 className='nav-caption__title'>
-          <i className='fa fa-fw fa-tags' aria-hidden></i>
+          <i className='fa fa-fw fa-tags' aria-hidden />
           <span>tags</span>
         </h3>
         <DisplayCSSTransition
@@ -46,23 +60,23 @@ class TagNavHeader extends Component {
         >
           <div className='nav-caption__operate'>
             <div
-              className={`nav-caption__operate-btn ${isEditTags || tagNameFormVisible ? 'disabled' : ''}`}
+              className={`nav-caption__operate-btn ${isEditingTags || tagNameFormVisible ? 'disabled' : ''}`}
               onClick={handleAddNewTag}
             >
-              <i className='fa fa-plus-square' aria-hidden></i>
+              <i className='fa fa-plus-square' aria-hidden />
               add
             </div>
-            <DisplayCSSTransition in={!isEditTags} timeout={150} classNames='enlarge'>
+            <DisplayCSSTransition in={!isEditingTags} timeout={150} classNames='enlarge'>
               <div
                 className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.size ? 'disabled' : ''}`}
                 onClick={handleEditTags}
               >
-                <i className='fa fa-cog' aria-hidden></i>
+                <i className='fa fa-cog' aria-hidden />
                 edit
               </div>
             </DisplayCSSTransition>
-            <DisplayCSSTransition in={isEditTags} timeout={150} classNames='enlarge'>
-              <div className='nav-caption__operate-btn' onClick={handleCompleteEditTags}>ok</div>
+            <DisplayCSSTransition in={isEditingTags} timeout={150} classNames='enlarge'>
+              <div className='nav-caption__operate-btn' onClick={handleEditTagsComplete}>ok</div>
             </DisplayCSSTransition>
           </div>
         </DisplayCSSTransition>
@@ -75,10 +89,15 @@ TagNavHeader.propTypes = {
   activeTagCategory: PropTypes.object.isRequired,
   tagNameFormVisible: PropTypes.bool.isRequired,
   onToggleTagNameFormVisible: PropTypes.func.isRequired,
-  isEditTags: PropTypes.bool.isRequired,
+  isEditingTags: PropTypes.bool.isRequired,
   onEditTags: PropTypes.func.isRequired,
   onEditTagsComplete: PropTypes.func.isRequired,
-  customTags: PropTypes.instanceOf(List).isRequired
+  customTags: PropTypes.instanceOf(List).isRequired,
+  updateCustomTags: PropTypes.func.isRequired
 }
 
-export default TagNavHeader
+const mapDispatchToProps = dispatch => ({
+  updateCustomTags: _ => dispatch(updateCustomTags())
+})
+
+export default connect(null, mapDispatchToProps)(TagNavHeader)

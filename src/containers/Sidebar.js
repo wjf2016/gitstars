@@ -9,20 +9,14 @@ import NewTagNameForm from './NewTagNameForm'
 import TagCategorys from '../components/TagCategorys'
 import appNamePng from '../assets/app-name.png'
 import config from '../config'
-import '../sidebar.css'
 
 const { tagCategorys } = config
-// let customTagsClone = []
 
 class Sidebar extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      tagNameFormVisible: false,
-      isEditTags: false,
-      activeTagCategory: tagCategorys.custom
-    }
+  state = {
+    tagNameFormVisible: false,
+    isEditingTags: false,
+    activeTagCategory: tagCategorys.custom
   }
 
   handleToggleTagNameFormVisible = _ => {
@@ -32,12 +26,12 @@ class Sidebar extends Component {
   }
 
   handleEditTags = _ => {
-    this.setState({ isEditTags: true })
+    this.setState({ isEditingTags: true })
     // customTagsClone = JSON.parse(JSON.stringify(this.props.customTags))
   }
 
   handleEditTagsComplete = _ => {
-    this.setState({ isEditTags: false })
+    this.setState({ isEditingTags: false })
   }
 
   handleCancelAddTag = _ => {
@@ -58,8 +52,8 @@ class Sidebar extends Component {
       handleCancelAddTag,
       handleSwitchTagCategory
     } = this
-    const { languageTags, customTags } = props
-    const { tagNameFormVisible, isEditTags, activeTagCategory } = state
+    const { defaultTags, languageTags, customTags } = props
+    const { tagNameFormVisible, isEditingTags, activeTagCategory } = state
 
     return (
       <section id='sidebar'>
@@ -69,13 +63,13 @@ class Sidebar extends Component {
             <img src={appNamePng} alt='app name' className='app-name-img' />
           </a>
         </header>
-        <TagsNav className='default-tags' tags={Object.values(config.defaultTags)} />
+        <TagsNav className='default-tags' tags={defaultTags} />
         <div className='tag-nav'>
           <TagNavHeader
             activeTagCategory={activeTagCategory}
             tagNameFormVisible={tagNameFormVisible}
             onToggleTagNameFormVisible={handleToggleTagNameFormVisible}
-            isEditTags={isEditTags}
+            isEditingTags={isEditingTags}
             onEditTags={handleEditTags}
             onEditTagsComplete={handleEditTagsComplete}
             customTags={customTags}
@@ -84,7 +78,7 @@ class Sidebar extends Component {
             visible={tagNameFormVisible}
             onCancelAddTag={handleCancelAddTag}
           />
-          <DisplayCSSTransition in={isEditTags} timeout={150} classNames='slide-down'>
+          <DisplayCSSTransition in={isEditingTags} timeout={150} classNames='slide-down'>
             <div className='edit-tag-tip'>tips</div>
           </DisplayCSSTransition>
           <div className='tag-list__group'>
@@ -94,7 +88,7 @@ class Sidebar extends Component {
               classNames='slide-to-left'
             >
               <div>
-                <TagsNav className='custom-tags' tags={customTags} />
+                <TagsNav className='custom-tags' tags={customTags} canDrag={isEditingTags} draggable />
               </div>
             </DisplayCSSTransition>
             <DisplayCSSTransition
@@ -102,11 +96,11 @@ class Sidebar extends Component {
               timeout={300}
               classNames='slide-to-right'
             >
-              <TagsNav className='language-tags' tags={languageTags}></TagsNav>
+              <TagsNav className='language-tags' tags={languageTags} />
             </DisplayCSSTransition>
           </div>
         </div>
-        <DisplayCSSTransition in={!isEditTags && !tagNameFormVisible} timeout={300} classNames='slide-down'>
+        <DisplayCSSTransition in={!isEditingTags && !tagNameFormVisible} timeout={300} classNames='slide-down'>
           <TagCategorys
             categorys={Object.values(tagCategorys)}
             activeCategory={activeTagCategory}
@@ -125,7 +119,7 @@ class Sidebar extends Component {
 }
 
 Sidebar.propTypes = {
-  languageTags: PropTypes.array.isRequired,
+  languageTags: PropTypes.instanceOf(List).isRequired,
   customTags: PropTypes.instanceOf(List).isRequired
 }
 

@@ -22,20 +22,15 @@ function loadStarredRepos (page = 1) {
       repos.forEach(repo => (repo._customTags = List()))
       starredRepos.push(...repos)
     } while (repos.length === starredReposPerPage)
-    // this.loadStarredReposCompleted = true
-    // resolve(this.starredRepos)
 
     resolve(starredRepos)
   })
 }
 
 class App extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      languageTags: []
-    }
+  state = {
+    defaultTags: List(),
+    languageTags: List()
   }
 
   componentDidMount () {
@@ -58,20 +53,20 @@ class App extends Component {
       return resolve({ starredRepos, gistContent })
     }).then(({ starredRepos, gistContent }) => {
       const { tags: customTags } = JSON.parse(gistContent)
-      const languageTags = []
+      let languageTags = List()
       let dateNow = Date.now()
 
       console.time('init language tags')
       starredRepos.forEach(({ id: repoId, language }) => {
-        defaultTags.all.repos.push(repoId)
+        defaultTags.all.repos = defaultTags.all.repos.push(repoId)
 
         if (!language) return
 
         const languageTag = languageTags.find(tag => tag.name === language)
         if (languageTag) {
-          languageTag.repos.push(repoId)
+          languageTag.repos = languageTag.repos.push(repoId)
         } else {
-          languageTags.push({ id: dateNow, name: language, repos: [repoId] })
+          languageTags = languageTags.push({ id: dateNow, name: language, repos: List([repoId]) })
           dateNow += 1
         }
       })
@@ -90,11 +85,13 @@ class App extends Component {
             repos[index] = undefined
           }
         })
-        tag.repos = tag.repos.filter(repo => repo)
+        tag.repos = List(tag.repos.filter(repo => repo))
       })
       console.timeEnd('init starred repositories custom tags')
 
-      defaultTags.untagged.repos = starredRepos.filter(repo => !repo._customTags.size).map(repo => repo.id)
+      defaultTags.untagged.repos = List(starredRepos.filter(repo => !repo._customTags.size).map(repo => repo.id))
+
+      this.setState({ defaultTags: Object.values(defaultTags) })
 
       this.props.initStarredRepos(starredRepos)
       this.props.initCustomTags(customTags)
@@ -106,9 +103,10 @@ class App extends Component {
   }
 
   render () {
+    const { defaultTags, languageTags } = this.state
     return (
       <div id='app'>
-        <Sidebar languageTags={this.state.languageTags} />
+        <Sidebar defaultTags={defaultTags} languageTags={languageTags} />
         <Main />
       </div>
     )

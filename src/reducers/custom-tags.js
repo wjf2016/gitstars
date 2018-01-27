@@ -8,6 +8,7 @@ const INIT_CUSTOM_TAGS = 'INIT_CUSTOM_TAGS'
 const ADD_CUSTOM_TAG = 'ADD_CUSTOM_TAG'
 const MODIFY_CUSTOM_TAG_NAME = 'MODIFY_CUSTOM_TAG_NAME'
 const DELETE_CUSTOM_TAG = 'DELETE_CUSTOM_TAG'
+const MOVE_CUSTOM_TAG = 'MOVE_CUSTOM_TAG'
 const ADD_CUSTOM_TAG_REPO = 'ADD_CUSTOM_TAG_REPO'
 const DELETE_CUSTOM_TAG_REPO = 'DELETE_CUSTOM_TAG_REPO'
 
@@ -21,6 +22,8 @@ export default function customTagsReducer (state = List(), action) {
       return state.setIn([action.index, 'name'], action.name)
     case DELETE_CUSTOM_TAG:
       return state.delete(action.index)
+    case MOVE_CUSTOM_TAG:
+      return state.delete(action.fromIndex).insert(action.toIndex, state.get(action.fromIndex))
     case ADD_CUSTOM_TAG_REPO:
       return state.setIn(
         [action.tagIndex, 'repos'],
@@ -37,6 +40,7 @@ export const initCustomTags = tags => ({ tags, type: INIT_CUSTOM_TAGS })
 export const addCustomTag = tag => ({ tag, type: ADD_CUSTOM_TAG })
 export const modifyCustomTagName = (index, name) => ({ index, name, type: MODIFY_CUSTOM_TAG_NAME })
 export const deleteCustomTag = index => ({ index, type: DELETE_CUSTOM_TAG })
+export const moveCustomTag = (fromIndex, toIndex) => ({ fromIndex, toIndex, type: MOVE_CUSTOM_TAG })
 export const addCustomTagRepo = (tagIndex, id) => ({ tagIndex, id, type: ADD_CUSTOM_TAG_REPO })
 export const deleteCustomTagRepo = (tagIndex, repoIndex) => ({ tagIndex, repoIndex, type: DELETE_CUSTOM_TAG_REPO })
 
@@ -51,9 +55,12 @@ export const updateCustomTags = action => (dispatch, getState) => {
   })
 
   const { customTags } = getState()
-  const newCustomTags = customTagsReducer(customTags, action)
+  let newCustomTags = customTags
 
-  dispatch(action)
+  if (action) {
+    newCustomTags = customTagsReducer(customTags, action)
+    dispatch(action)
+  }
 
   const gist = { lastModified: DateNow, tags: newCustomTags }
   return saveGitstarsGist(gist)

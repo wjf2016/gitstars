@@ -17,9 +17,11 @@ export default function activeRepos (state = repos, action) {
       if (tagId === defaultTags.all.id) {
         return repos
       } else if (tagId === defaultTags.untagged.id) {
-        return repos.filter(repo => !repo._customTags.length)
+        return repos.filter(repo => !repo._customTags.size)
       } else {
-        return tagRepos.map(repoId => repos.find(repo => repo.id === repoId))
+        // tagRepos 是 Immutable List 数据
+        // activeRepos 的数据类型为 Array
+        return [...tagRepos.map(repoId => repos.find(repo => repo.id === repoId))]
       }
     default:
       return state
@@ -27,5 +29,4 @@ export default function activeRepos (state = repos, action) {
 }
 
 export const initActiveRepos = repos => ({ repos, type: INIT_REPOS })
-
 export const filterActiveReposByTag = tag => ({ tag, type: FILTER_REPOS_BY_TAG })

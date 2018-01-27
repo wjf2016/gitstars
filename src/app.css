@@ -31,3 +31,13 @@
   top: 50%;
   margin-top: -12px;
 }
+
+.popover-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.popover-footer .ant-btn {
+  margin-left: 10px;
+  text-transform: capitalize;
+}
