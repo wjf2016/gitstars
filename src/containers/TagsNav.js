@@ -6,7 +6,7 @@ import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import TagNav from './TagNav'
 import { switchTag } from '../reducers/active-tag'
-import wrapWithDragDrapContext from '../hocs/wrapWithDragDrapContext'
+import dndDragDrapContext from '../hocs/dndDragDrapContext'
 
 class TagsNav extends Component {
   render () {
@@ -63,7 +63,7 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(wrapWithDragDrapContext(
+)(dndDragDrapContext(
   DragDropContext,
   HTML5Backend
 )(TagsNav))

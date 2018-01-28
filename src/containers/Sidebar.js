@@ -27,7 +27,6 @@ class Sidebar extends Component {
 
   handleEditTags = _ => {
     this.setState({ isEditingTags: true })
-    // customTagsClone = JSON.parse(JSON.stringify(this.props.customTags))
   }
 
   handleEditTagsComplete = _ => {
@@ -68,16 +67,12 @@ class Sidebar extends Component {
           <TagNavHeader
             activeTagCategory={activeTagCategory}
             tagNameFormVisible={tagNameFormVisible}
-            onToggleTagNameFormVisible={handleToggleTagNameFormVisible}
             isEditingTags={isEditingTags}
+            onToggleTagNameFormVisible={handleToggleTagNameFormVisible}
             onEditTags={handleEditTags}
             onEditTagsComplete={handleEditTagsComplete}
-            customTags={customTags}
           />
-          <NewTagNameForm
-            visible={tagNameFormVisible}
-            onCancelAddTag={handleCancelAddTag}
-          />
+          <NewTagNameForm visible={tagNameFormVisible} onCancelAddTag={handleCancelAddTag} />
           <DisplayCSSTransition in={isEditingTags} timeout={150} classNames='slide-down'>
             <div className='edit-tag-tip'>tips</div>
           </DisplayCSSTransition>
@@ -87,9 +82,7 @@ class Sidebar extends Component {
               timeout={300}
               classNames='slide-to-left'
             >
-              <div>
-                <TagsNav className='custom-tags' tags={customTags} canDrag={isEditingTags} draggable />
-              </div>
+              <TagsNav className='custom-tags' tags={customTags} canDrag={isEditingTags} draggable />
             </DisplayCSSTransition>
             <DisplayCSSTransition
               in={activeTagCategory.id === tagCategorys.language.id}

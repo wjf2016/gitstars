@@ -12,19 +12,17 @@ import config from '../config'
 
 const { gistId, starredReposPerPage, defaultTags } = config
 
-function loadStarredRepos (page = 1) {
-  return new Promise(async (resolve, reject) => {
-    const starredRepos = []
-    let repos = []
+async function loadStarredRepos (page = 1) {
+  const starredRepos = []
+  let repos = []
 
-    do {
-      repos = await getStarredRepos(page++)
-      repos.forEach(repo => (repo._customTags = List()))
-      starredRepos.push(...repos)
-    } while (repos.length === starredReposPerPage)
+  do {
+    repos = await getStarredRepos(page++)
+    repos.forEach(repo => (repo._customTags = List()))
+    starredRepos.push(...repos)
+  } while (repos.length === starredReposPerPage)
 
-    resolve(starredRepos)
-  })
+  return starredRepos
 }
 
 class App extends Component {

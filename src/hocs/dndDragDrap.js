@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-export default function wrapWithDragDrap (type, DragSource, DropTarget) {
+export default (type, DragSource, DropTarget) => {
   const source = {
     beginDrag: props => ({ index: props.index }),
     canDrag: props => props.canDrag
@@ -19,7 +19,8 @@ export default function wrapWithDragDrap (type, DragSource, DropTarget) {
 
       if (dragIndex === hoverIndex) return
 
-      props.onMove(dragIndex, hoverIndex)
+      // 由被包裹组件提供
+      props.move(dragIndex, hoverIndex)
 
       monitor.getItem().index = hoverIndex
     }
@@ -29,13 +30,13 @@ export default function wrapWithDragDrap (type, DragSource, DropTarget) {
     connectDropTarget: connect.dropTarget()
   })
 
-  const drapTarget = DropTarget(type, target, targetCollect)
   const dragSource = DragSource(type, source, sourceCollect)
+  const drapTarget = DropTarget(type, target, targetCollect)
 
-  return function (WrappedComponent) {
+  return WrappedComponent => {
     const DragDrapComponent = dragSource(drapTarget(WrappedComponent))
 
-    class WrapWithDragDrap extends Component {
+    class DndDragDrapWrap extends Component {
       render () {
         return this.props.draggable
           ? <DragDrapComponent {...this.props} />
@@ -43,10 +44,10 @@ export default function wrapWithDragDrap (type, DragSource, DropTarget) {
       }
     }
 
-    WrapWithDragDrap.propTypes = {
+    DndDragDrapWrap.propTypes = {
       draggable: PropTypes.bool
     }
 
-    return WrapWithDragDrap
+    return DndDragDrapWrap
   }
 }

@@ -2,13 +2,16 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { DragSource, DropTarget } from 'react-dnd'
-import { Popover } from 'antd'
+import { Popover, notification } from 'antd'
 import PopoverFooter from '../components/PopoverFooter'
-import { moveCustomTag, deleteCustomTag } from '../reducers/custom-tags'
-import wrapWithDragDrap from '../hocs/wrapWithDragDrap'
+import { moveCustomTag, deleteCustomTag, modifyCustomTagName } from '../reducers/custom-tags'
+import dndDragDrap from '../hocs/dndDragDrap'
+import validateCustomTagName from '../hocs/validateCustomTagName'
 
 class TagNav extends Component {
   state = {
+    inputVisible: false,
+    newName: '',
     popoverVisible: false
   }
 
@@ -18,9 +21,53 @@ class TagNav extends Component {
     onClick(tag)
   }
 
-  handleChangeName = _ => {
-    if (!this.props.canDrag) return
-    console.log(111)
+  handleToggleInputVisible = _ => {
+    const { canDrag, tag } = this.props
+
+    if (!canDrag) return
+
+    this.setState({
+      inputVisible: true,
+      newName: tag.name
+    }, _ => this.tagNameInput.focus())
+  }
+
+  handleChangeName = e => {
+    this.setState({ newName: e.target.value })
+  }
+
+  handleChangeNameComplete = _ => {
+    const { props, state } = this
+    const { tag, validateCustomTagName, modifyName } = props
+    const { inputVisible, newName } = state
+
+    if (!inputVisible && !newName) return
+
+    const name = newName.trim()
+
+    if (tag.name === name) return this.setState({ inputVisible: false, newName: '' })
+
+    validateCustomTagName(name)
+      .then(name => {
+        modifyName(this.props.index, name)
+        this.setState({ inputVisible: false, newName: '' })
+      })
+      .catch(err => {
+        notification.warning({
+          message: '修改标签名称失败',
+          description: err.message
+        })
+        this.tagNameInput.focus()
+      })
+  }
+
+  handleChangeNameByKeyUp = e => {
+    const { keyCode } = e
+    if (keyCode === 13) { // enter
+      this.handleChangeNameComplete()
+    } else if (keyCode === 27) { // esc
+      this.setState({ inputVisible: false, newName: '' })
+    }
   }
 
   handleDelete = e => {
@@ -35,7 +82,7 @@ class TagNav extends Component {
 
   handleConfirmDelete = e => {
     e.stopPropagation()
-    this.props.deleteCustomTag(this.props.index)
+    this.props.deleteTag(this.props.index)
   }
 
   render () {
@@ -43,7 +90,10 @@ class TagNav extends Component {
       props,
       state,
       handleSwitch,
+      handleToggleInputVisible,
       handleChangeName,
+      handleChangeNameComplete,
+      handleChangeNameByKeyUp,
       handleDelete,
       handleCancelDelete,
       handleConfirmDelete
@@ -57,14 +107,31 @@ class TagNav extends Component {
       connectDropTarget,
       isDragging
     } = props
+    const {
+      inputVisible,
+      newName,
+      popoverVisible
+    } = state
 
     const tagNavNode = (_ => (
       <li
         className={`nav-item ${isActive ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
         onClick={handleSwitch}>
-        <label className='nav-item__label' onDoubleClick={handleChangeName}>
+        <label className='nav-item__label' onDoubleClick={handleToggleInputVisible}>
           <i className={`fa fa-fw ${tag.icon ? tag.icon : 'fa-tag'}`} aria-hidden />
-          {tag.name}
+          {
+            draggable &&
+            <input
+              type='text'
+              className={`nav-item__input--name ${inputVisible ? '' : 'dn'}`}
+              ref={input => (this.tagNameInput = input)}
+              value={newName}
+              onChange={handleChangeName}
+              onBlur={handleChangeNameComplete}
+              onKeyUp={handleChangeNameByKeyUp}
+            />
+          }
+          <span className={`${inputVisible ? 'dn' : ''}`}>{tag.name}</span>
         </label>
         <span className={`nav-item-badge ${canDrag ? 'dn' : ''}`}>{tag.repos.size}</span>
         {
@@ -73,7 +140,7 @@ class TagNav extends Component {
             placement='right'
             title='确定删除？'
             trigger='click'
-            visible={state.popoverVisible}
+            visible={popoverVisible}
             content={<PopoverFooter onCancel={handleCancelDelete} onConfirm={handleConfirmDelete} />}
           >
             <i className={`fa fa-times-circle ${canDrag ? '' : 'dn'}`} onClick={handleDelete} aria-hidden />
@@ -96,7 +163,9 @@ TagNav.propTypes = {
   connectDragSource: PropTypes.func,
   connectDropTarget: PropTypes.func,
   isDragging: PropTypes.bool,
-  deleteCustomTag: PropTypes.func.isRequired
+  validateCustomTagName: PropTypes.func.isRequired,
+  deleteTag: PropTypes.func.isRequired,
+  modifyName: PropTypes.func.isRequired
 }
 
 TagNav.defaultProps = {
@@ -106,15 +175,18 @@ TagNav.defaultProps = {
 }
 
 const mapDispatchToProps = dispatch => ({
-  onMove: (fromIndex, toIndex) => dispatch(moveCustomTag(fromIndex, toIndex)),
-  deleteCustomTag: index => dispatch(deleteCustomTag(index))
+  // 提供给 HOC dndDragDrap
+  // 当拖动标签导致顺序变化时调用
+  move: (fromIndex, toIndex) => dispatch(moveCustomTag(fromIndex, toIndex)),
+  deleteTag: index => dispatch(deleteCustomTag(index)),
+  modifyName: (index, name) => dispatch(modifyCustomTagName(index, name))
 })
 
 export default connect(
   null,
   mapDispatchToProps
-)(wrapWithDragDrap(
+)(dndDragDrap(
   'tagNav',
   DragSource,
   DropTarget
-)(TagNav))
+)(validateCustomTagName(TagNav)))

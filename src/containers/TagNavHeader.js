@@ -13,6 +13,7 @@ let customTagsClone = null
 class TagNavHeader extends Component {
   handleAddNewTag = _ => {
     const { tagNameFormVisible, isEditingTags, onToggleTagNameFormVisible } = this.props
+
     if (isEditingTags || tagNameFormVisible) return
 
     onToggleTagNameFormVisible()
@@ -20,6 +21,7 @@ class TagNavHeader extends Component {
 
   handleEditTags = _ => {
     const { tagNameFormVisible, customTags, onEditTags } = this.props
+
     if (tagNameFormVisible || !customTags.size) return
 
     customTagsClone = customTags
@@ -28,6 +30,7 @@ class TagNavHeader extends Component {
 
   handleEditTagsComplete = _ => {
     const { customTags, onEditTagsComplete, updateCustomTags } = this.props
+
     onEditTagsComplete()
 
     if (customTags.equals(customTagsClone)) return
@@ -96,8 +99,12 @@ TagNavHeader.propTypes = {
   updateCustomTags: PropTypes.func.isRequired
 }
 
+const mapStateToProps = state => ({
+  customTags: state.customTags
+})
+
 const mapDispatchToProps = dispatch => ({
   updateCustomTags: _ => dispatch(updateCustomTags())
 })
 
-export default connect(null, mapDispatchToProps)(TagNavHeader)
+export default connect(mapStateToProps, mapDispatchToProps)(TagNavHeader)
