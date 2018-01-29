@@ -77,7 +77,7 @@ class App extends Component {
         tag.repos.forEach((repoId, index, repos) => {
           const repo = starredRepos.find(({ id }) => id === repoId)
           if (repo) {
-            repo._customTags = repo._customTags.push({ id: tag.id, name: tag.name })
+            repo._customTags = repo._customTags.push(tag)
           } else {
             // isIncludeInvalidId = true
             repos[index] = undefined

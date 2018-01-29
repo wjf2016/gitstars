@@ -338,6 +338,7 @@
   background-color: #28343d;
 }
 .author {
+  margin-bottom: 0;
   font-size: inherit;
   color: inherit;
 }

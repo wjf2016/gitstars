@@ -10,7 +10,7 @@ import dndDragDrapContext from '../hocs/dndDragDrapContext'
 
 class TagsNav extends Component {
   render () {
-    const { className, style, tags, canDrag, draggable, activeTag, onSwitchTag } = this.props
+    const { className, style, tags, isEditingTags, canDrag, draggable, activeTag, onSwitchTag } = this.props
 
     return (
       <ul className={`nav-tag ${className}`} style={style}>
@@ -20,6 +20,7 @@ class TagsNav extends Component {
               key={tag.id}
               index={index}
               tag={tag}
+              isEditingTags={isEditingTags}
               isActive={tag.id === activeTag.id}
               canDrag={canDrag}
               onClick={onSwitchTag}
@@ -39,6 +40,7 @@ TagsNav.propTypes = {
     PropTypes.array,
     PropTypes.instanceOf(List)
   ]).isRequired,
+  isEditingTags: PropTypes.bool,
   canDrag: PropTypes.bool,
   draggable: PropTypes.bool,
   activeTag: PropTypes.object.isRequired,
@@ -48,6 +50,7 @@ TagsNav.propTypes = {
 TagsNav.defaultProps = {
   className: '',
   style: {},
+  isEditingTags: false,
   canDrag: false,
   draggable: false
 }

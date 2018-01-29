@@ -16,12 +16,21 @@ class TagNav extends Component {
   }
 
   handleSwitch = _ => {
-    const { canDrag, tag, onClick } = this.props
-    if (canDrag) return
+    const { isActive, isEditingTags, canDrag, tag, onClick } = this.props
+
+    if (isEditingTags && !canDrag) {
+      return notification.warning({
+        message: '切换标签失败',
+        description: '编辑状态下无法切换标签'
+      })
+    }
+
+    if (isActive || canDrag) return
+
     onClick(tag)
   }
 
-  handleToggleInputVisible = _ => {
+  handleToggleInputVisible = e => {
     const { canDrag, tag } = this.props
 
     if (!canDrag) return
@@ -101,6 +110,7 @@ class TagNav extends Component {
     const {
       tag,
       isActive,
+      isEditingTags,
       canDrag,
       draggable,
       connectDragSource,
@@ -115,7 +125,7 @@ class TagNav extends Component {
 
     const tagNavNode = (_ => (
       <li
-        className={`nav-item ${isActive ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
+        className={`nav-item ${isActive && !isEditingTags ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
         onClick={handleSwitch}>
         <label className='nav-item__label' onDoubleClick={handleToggleInputVisible}>
           <i className={`fa fa-fw ${tag.icon ? tag.icon : 'fa-tag'}`} aria-hidden />
@@ -126,6 +136,7 @@ class TagNav extends Component {
               className={`nav-item__input--name ${inputVisible ? '' : 'dn'}`}
               ref={input => (this.tagNameInput = input)}
               value={newName}
+              onClick={e => e.stopPropagation()}
               onChange={handleChangeName}
               onBlur={handleChangeNameComplete}
               onKeyUp={handleChangeNameByKeyUp}
@@ -133,7 +144,7 @@ class TagNav extends Component {
           }
           <span className={`${inputVisible ? 'dn' : ''}`}>{tag.name}</span>
         </label>
-        <span className={`nav-item-badge ${canDrag ? 'dn' : ''}`}>{tag.repos.size}</span>
+        <span className={`nav-item-badge ${isEditingTags && canDrag ? 'dn' : ''}`}>{tag.repos.size}</span>
         {
           draggable &&
           <Popover
@@ -143,7 +154,7 @@ class TagNav extends Component {
             visible={popoverVisible}
             content={<PopoverFooter onCancel={handleCancelDelete} onConfirm={handleConfirmDelete} />}
           >
-            <i className={`fa fa-times-circle ${canDrag ? '' : 'dn'}`} onClick={handleDelete} aria-hidden />
+            <i className={`fa fa-times-circle ${isEditingTags && canDrag ? '' : 'dn'}`} onClick={handleDelete} aria-hidden />
           </Popover>
         }
       </li >
@@ -156,7 +167,8 @@ class TagNav extends Component {
 TagNav.propTypes = {
   index: PropTypes.number.isRequired,
   tag: PropTypes.object.isRequired,
-  isActive: PropTypes.bool.isRequired,
+  isEditingTags: PropTypes.bool,
+  isActive: PropTypes.bool,
   canDrag: PropTypes.bool,
   draggable: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
@@ -169,6 +181,7 @@ TagNav.propTypes = {
 }
 
 TagNav.defaultProps = {
+  isEditingTags: false,
   canDrag: false,
   draggable: false,
   isDragging: false

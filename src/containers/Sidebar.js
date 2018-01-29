@@ -62,7 +62,7 @@ class Sidebar extends Component {
             <img src={appNamePng} alt='app name' className='app-name-img' />
           </a>
         </header>
-        <TagsNav className='default-tags' tags={defaultTags} />
+        <TagsNav className='default-tags' tags={defaultTags} isEditingTags={isEditingTags} />
         <div className='tag-nav'>
           <TagNavHeader
             activeTagCategory={activeTagCategory}
@@ -82,14 +82,14 @@ class Sidebar extends Component {
               timeout={300}
               classNames='slide-to-left'
             >
-              <TagsNav className='custom-tags' tags={customTags} canDrag={isEditingTags} draggable />
+              <TagsNav className='custom-tags' tags={customTags} isEditingTags={isEditingTags} canDrag={isEditingTags} draggable />
             </DisplayCSSTransition>
             <DisplayCSSTransition
               in={activeTagCategory.id === tagCategorys.language.id}
               timeout={300}
               classNames='slide-to-right'
             >
-              <TagsNav className='language-tags' tags={languageTags} />
+              <TagsNav className='language-tags' tags={languageTags} isEditingTags={isEditingTags} />
             </DisplayCSSTransition>
           </div>
         </div>

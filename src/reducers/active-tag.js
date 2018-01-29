@@ -16,5 +16,4 @@ export default function activeTag (state = tagAll, action) {
 }
 
 export const initactiveTag = tag => ({ tag, type: INIT_TAG })
-
 export const switchTag = tag => ({ tag, type: SWITCH_TAG })

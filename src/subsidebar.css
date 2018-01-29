@@ -89,13 +89,17 @@
   margin-bottom: 0.3em;
   margin-right: 0.5em;
 }
-.tag-delete-btn {
-  margin-left: -7px;
-  line-height: 19px;
-  cursor: pointer;
+.tag-item .anticon-close {
+  margin-left: 5px;
+  border-radius: 50%;
+  transition: all 0.15s;
 }
-.tag-delete-btn:hover {
-  font-size: 13px;
+.tag-item .anticon-close:hover {
+  color: #fff;
+  background-color: #1890ff;
+}
+.tag-item .anticon-close:hover::before {
+  transform: scale(0.75);
 }
 .repo-footer {
   display: flex;
