@@ -13,13 +13,13 @@ import config from '../config'
 const { gistId, starredReposPerPage, defaultTags } = config
 
 async function loadStarredRepos (page = 1) {
-  const starredRepos = []
+  let starredRepos = List()
   let repos = []
 
   do {
     repos = await getStarredRepos(page++)
     repos.forEach(repo => (repo._customTags = List()))
-    starredRepos.push(...repos)
+    starredRepos = starredRepos.push(...repos)
   } while (repos.length === starredReposPerPage)
 
   return starredRepos
@@ -50,7 +50,7 @@ class App extends Component {
 
       return resolve({ starredRepos, gistContent })
     }).then(({ starredRepos, gistContent }) => {
-      const { tags: customTags } = JSON.parse(gistContent)
+      const customTags = List(JSON.parse(gistContent).tags)
       let languageTags = List()
       let dateNow = Date.now()
 
@@ -87,12 +87,12 @@ class App extends Component {
       })
       console.timeEnd('init starred repositories custom tags')
 
-      defaultTags.untagged.repos = List(starredRepos.filter(repo => !repo._customTags.size).map(repo => repo.id))
+      defaultTags.untagged.repos = starredRepos.filter(repo => !repo._customTags.size).map(repo => repo.id)
 
       this.setState({ defaultTags: Object.values(defaultTags) })
 
       this.props.initStarredRepos(starredRepos)
-      this.props.initCustomTags(customTags)
+      this.props.initCustomTags(List(customTags))
 
       if (!isCustomTagsFromLocalStorage) {
         window.localStorage.setItem(gistId, gistContent)

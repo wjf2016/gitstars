@@ -1,37 +1,47 @@
 import { List } from 'immutable'
 import config from '../config'
 
-const INIT_REPOS = 'INIT_REPOS'
+const INIT_ACTIVE_REPOS = 'INIT_ACTIVE_REPOS'
 const FILTER_REPOS_BY_TAG = 'FILTER_REPOS_BY_TAG'
 const DELETE_REPO_CUSTOM_TAG = 'DELETE_REPO_CUSTOM_TAG'
+const INSERT_REPO_CUSTOM_TAG = 'INSERT_REPO_CUSTOM_TAG'
 
 const { defaultTags } = config
-let repos = List()
+let allRepos = List()
 
-export default function activeRepos (state = repos, action) {
+export default function activeRepos (state = allRepos, action) {
   switch (action.type) {
-    case INIT_REPOS:
-      repos = List(action.repos)
-      return repos
+    case INIT_ACTIVE_REPOS:
+      if (action.repos.size === defaultTags.all.repos.size) {
+        // bug
+        // 删除标签后切换标签在切换回标签
+        // 被删除的标签依然存在
+        allRepos = action.repos
+      }
+      return action.repos
     case FILTER_REPOS_BY_TAG:
       const { id: tagId, repos: tagRepos } = action.tag
-
       if (tagId === defaultTags.all.id) {
-        return repos
+        return allRepos
       } else if (tagId === defaultTags.untagged.id) {
-        return repos.filter(repo => !repo._customTags.size)
+        return allRepos.filter(repo => !repo._customTags.size)
       } else {
-        // tagRepos 是 Immutable List 数据
-        // activeRepos 的数据类型为 Array
-        return List(tagRepos.map(repoId => repos.find(repo => repo.id === repoId)))
+        return tagRepos.map(repoId => allRepos.find(repo => repo.id === repoId))
       }
     case DELETE_REPO_CUSTOM_TAG:
       return state.deleteIn([action.repoIndex, '_customTags', action.tagIndex])
+    // case INSERT_REPO_CUSTOM_TAG:
+    //   const repoIndex = state.findIndex(repo => repo.id === action.repoId)
+    //   return state.setIn(
+    //     [repoIndex, '_customTags'],
+    //     state.get(repoIndex)._customTags.splice(action.tagIndex, 0, action.tag)
+    //   )
     default:
       return state
   }
 }
 
-export const initActiveRepos = repos => ({ repos, type: INIT_REPOS })
+export const initActiveRepos = repos => ({ repos, type: INIT_ACTIVE_REPOS })
 export const filterActiveReposByTag = tag => ({ tag, type: FILTER_REPOS_BY_TAG })
 export const deleteRepoCustomTag = (repoIndex, tagIndex) => ({ repoIndex, tagIndex, type: DELETE_REPO_CUSTOM_TAG })
+export const insertRepoCustomTag = (repoId, tagIndex, tag) => ({ repoId, tagIndex, tag, type: INSERT_REPO_CUSTOM_TAG })

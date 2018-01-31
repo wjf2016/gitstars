@@ -5,7 +5,6 @@ import { Tag, Popover, Icon, notification } from 'antd'
 import PopoverFooter from '../components/PopoverFooter'
 import { switchTag } from '../reducers/active-tag'
 import { updateCustomTags, deleteCustomTagRepo } from '../reducers/custom-tags'
-import { deleteRepoCustomTag } from '../reducers/active-repos'
 
 class RepoTag extends Component {
   state = {
@@ -30,19 +29,14 @@ class RepoTag extends Component {
   handleConfirmDelete = e => {
     e.stopPropagation()
 
-    const { repo, repoIndex, tag, tagIndex, deleteRepoCustomTag, deleteCustomTagRepo } = this.props
+    const { repo, repoIndex, tag, tagIndex, deleteCustomTagRepo } = this.props
 
-    deleteRepoCustomTag(repoIndex, tagIndex)
-
-    deleteCustomTagRepo(tag.id, repo.id)
+    deleteCustomTagRepo(tag, tagIndex, repo, repoIndex)
       .then(_ => {
         notification.success({
           message: `${repo.owner.login} / ${repo.name}`,
           description: `删除标签：${tag.name}`
         })
-      })
-      .catch(_ => {
-        // TODO
       })
 
     this.setState({ popoverVisible: false })
@@ -78,14 +72,12 @@ RepoTag.propTypes = {
   tag: PropTypes.object.isRequired,
   tagIndex: PropTypes.number.isRequired,
   switchTag: PropTypes.func.isRequired,
-  deleteRepoCustomTag: PropTypes.func.isRequired,
   deleteCustomTagRepo: PropTypes.func.isRequired
 }
 
 const mapDispatchToProps = dispatch => ({
   switchTag: tag => dispatch(switchTag(tag)),
-  deleteRepoCustomTag: (repoIndex, tagIndex) => dispatch(deleteRepoCustomTag(repoIndex, tagIndex)),
-  deleteCustomTagRepo: (tagId, repoId) => dispatch(updateCustomTags(deleteCustomTagRepo(tagId, repoId)))
+  deleteCustomTagRepo: (tag, tagIndex, repo, repoIndex) => dispatch(updateCustomTags(deleteCustomTagRepo(tag, tagIndex, repo, repoIndex)))
 })
 
 export default connect(null, mapDispatchToProps)(RepoTag)

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { List } from 'immutable'
 import RepoTag from './RepoTag'
 import { switchActiveRepo } from '../reducers/active-repo'
 
@@ -51,7 +52,7 @@ class RepoList extends Component {
 }
 
 RepoList.propTypes = {
-  activeRepos: PropTypes.array.isRequired,
+  activeRepos: PropTypes.instanceOf(List).isRequired,
   activeRepo: PropTypes.object.isRequired,
   switchRepo: PropTypes.func.isRequired
 }
