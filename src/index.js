@@ -9,6 +9,7 @@ import reducers from './reducers'
 import { getUserInfo } from './api'
 
 import 'font-awesome/css/font-awesome.css'
+import 'github-markdown-css'
 import './base.css'
 import './app.css'
 import './sidebar.css'

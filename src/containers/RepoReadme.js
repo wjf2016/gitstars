@@ -1,32 +1,47 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { AutoComplete, Input } from 'antd'
+import { List } from 'immutable'
+import { addStarredRepoTag } from '../reducers/starred-repos'
 import { getRepoReadme, getRenderedReadme } from '../api'
 
 class RepoReadme extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      repoReadme: ''
-    }
+  state = {
+    readme: ''
   }
 
   async componentWillReceiveProps (nextProps) {
-    const { id, owner, name } = nextProps.activeRepo
+    const { activeRepo, customTags } = nextProps
 
-    if (id !== this.props.activeRepo.id) {
-      const { content } = await getRepoReadme(owner.login, name)
+    if (activeRepo.id !== this.props.activeRepo.id) {
+      const { content } = await getRepoReadme(activeRepo.owner.login, activeRepo.name)
 
       // 包含中文内容的 base64 解码
-      const repoReadme = await getRenderedReadme(decodeURIComponent(escape(atob(content))))
-      this.setState({ repoReadme })
+      const readme = await getRenderedReadme(decodeURIComponent(escape(atob(content))))
+      this.setState({ readme })
     }
+
+    // if (!customTags.equals(this.props.customTags)) {
+    //   this.set
+    // }
+  }
+
+  handleSelectTag = name => {
+    const { customTags, activeRepo } = this.props
+    const tag = customTags.find(tag => tag.name === name) || { id: Date.now(), name, repos: [activeRepo.id] }
+
+    this.props.addRepoTag(activeRepo.id, tag)
+  }
+
+  handleChangeTagName = name => {
+    console.log(name)
   }
 
   render () {
-    const { activeRepo } = this.props
-    const { repoReadme } = this.state
+    const { props, state, handleSelectTag, handleChangeTagName } = this
+    const { activeRepo, customTags } = props
+    const { readme } = state
 
     return (
       Object.keys(activeRepo).length &&
@@ -38,15 +53,29 @@ class RepoReadme extends Component {
             </a>
             {activeRepo.owner.login} / {activeRepo.name}
           </h3>
+          <AutoComplete
+            dataSource={
+              customTags
+                .filter(tag => !tag.repos.includes(activeRepo.id))
+                .map(({ name }) => ({ value: name, text: name }))
+                .toArray()
+            }
+            defaultActiveFirstOption={false}
+            onChange={handleChangeTagName}
+            onSelect={handleSelectTag}
+          >
+            <Input addonAfter='添加' placeholder='新增标签' />
+          </AutoComplete>
         </header>
-        <article dangerouslySetInnerHTML={{ __html: repoReadme }} className='markdown-body'></article>
+        <article className='markdown-body' dangerouslySetInnerHTML={{ __html: readme }}></article>
       </div >
     )
   }
 }
 
 RepoReadme.propTypes = {
-  activeRepo: PropTypes.object
+  activeRepo: PropTypes.object,
+  customTags: PropTypes.instanceOf(List).isRequired
 }
 
 RepoReadme.defaultProps = {
@@ -54,7 +83,12 @@ RepoReadme.defaultProps = {
 }
 
 const mapStateToProps = state => ({
-  activeRepo: state.activeRepo
+  activeRepo: state.activeRepo,
+  customTags: state.customTags
 })
 
-export default connect(mapStateToProps)(RepoReadme)
+const mapDispatchToProps = dispatch => ({
+  addRepoTag: (repoId, tag) => dispatch(addStarredRepoTag(repoId, tag))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(RepoReadme)

@@ -2,7 +2,7 @@ import React from 'react'
 import { List } from 'immutable'
 import { notification } from 'antd'
 import { saveGitstarsGist } from '../api'
-import { deleteRepoCustomTag, initActiveRepos } from './active-repos'
+import { deleteStarredRepoTag, initStarredRepos } from './starred-repos'
 import config from '../config'
 
 const INIT_CUSTOM_TAGS = 'INIT_CUSTOM_TAGS'
@@ -31,8 +31,9 @@ export default function customTagsReducer (state = List(), action) {
         state.get(action.tagIndex).repos.push(action.id)
       )
     case DELETE_CUSTOM_TAG_REPO:
-      const tagIndex = state.findIndex(tag => tag.id === action.tag.id)
-      const repoIndex = action.tag.repos.findIndex(repoId => repoId === action.repo.id)
+      const tag = state.find(tag => tag.id === action.tagId)
+      const tagIndex = state.findIndex(tag => tag.id === action.tagId)
+      const repoIndex = tag.repos.findIndex(repoId => repoId === action.repoId)
       return state.deleteIn([tagIndex, 'repos', repoIndex])
     default:
       return state
@@ -45,7 +46,7 @@ export const modifyCustomTagName = (index, name) => ({ index, name, type: MODIFY
 export const deleteCustomTag = index => ({ index, type: DELETE_CUSTOM_TAG })
 export const moveCustomTag = (fromIndex, toIndex) => ({ fromIndex, toIndex, type: MOVE_CUSTOM_TAG })
 export const addCustomTagRepo = (tagIndex, id) => ({ tagIndex, id, type: ADD_CUSTOM_TAG_REPO })
-export const deleteCustomTagRepo = (tag, tagIndex, repo, repoIndex) => ({ tag, tagIndex, repo, repoIndex, type: DELETE_CUSTOM_TAG_REPO })
+export const deleteCustomTagRepo = (tagId, repoId) => ({ tagId, repoId, type: DELETE_CUSTOM_TAG_REPO })
 
 export const updateCustomTags = action => (dispatch, getState) => {
   const DateNow = Date.now()
@@ -57,7 +58,7 @@ export const updateCustomTags = action => (dispatch, getState) => {
     duration: 0
   })
 
-  const { customTags, activeRepos } = getState()
+  const { customTags, starredRepos } = getState()
   let newCustomTags = customTags
 
   if (action) {
@@ -65,8 +66,8 @@ export const updateCustomTags = action => (dispatch, getState) => {
     dispatch(action)
 
     if (action.type === DELETE_CUSTOM_TAG_REPO) {
-      const { repoIndex, tagIndex } = action
-      dispatch(deleteRepoCustomTag(repoIndex, tagIndex))
+      const { repoId, tagId } = action
+      dispatch(deleteStarredRepoTag(repoId, tagId))
     }
   }
 
@@ -80,10 +81,7 @@ export const updateCustomTags = action => (dispatch, getState) => {
       dispatch(initCustomTags(customTags))
 
       if (action.type === DELETE_CUSTOM_TAG_REPO) {
-        // bug
-        // 接口调用成功之前切换标签
-        // 接口调用完成之后会还原到 activeRepos 数据内容
-        dispatch(initActiveRepos(activeRepos))
+        dispatch(initStarredRepos(starredRepos))
       }
     })
 }

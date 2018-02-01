@@ -1,26 +1,25 @@
 import { List } from 'immutable'
-import config from '../config'
 
 const INIT_STARRED_REPOS = 'INIT_STARRED_REPOS'
-const ADD_STARRED_REPOS_TAG = 'ADD_STARRED_REPOS_TAG'
-const DELETE_STARRED_REPOS_TAG = 'DELETE_STARRED_REPOS_TAG'
+const ADD_STARRED_REPO_TAG = 'ADD_STARRED_REPO_TAG'
+const DELETE_STARRED_REPO_TAG = 'DELETE_STARRED_REPO_TAG'
 
-export default function (state = List(), action) {
-  let repoIndex = 0
-  let tagIndex = 0
+let repoIndex = 0
+let tagIndex = 0
 
+export default function starredRepos (state = List(), action) {
   switch (action.type) {
     case INIT_STARRED_REPOS:
-      return List(action.repos)
-    case ADD_STARRED_REPOS_TAG:
+      return action.repos
+    case ADD_STARRED_REPO_TAG:
       repoIndex = state.findIndex(repo => repo.id === action.repoId)
       return state.setIn(
         [repoIndex, '_customTags'],
-        state[repoIndex]._customTags.push(action.tagId)
+        state.get(repoIndex)._customTags.push(action.tag)
       )
-    case DELETE_STARRED_REPOS_TAG:
+    case DELETE_STARRED_REPO_TAG:
       repoIndex = state.findIndex(repo => repo.id === action.repoId)
-      tagIndex = state[repoIndex]._customTags.find(tag => tag.id === action.tagId)
+      tagIndex = state.get(repoIndex)._customTags.findIndex(tag => tag.id === action.tagId)
       return state.deleteIn([repoIndex, '_customTags', tagIndex])
     default:
       return state
@@ -28,5 +27,5 @@ export default function (state = List(), action) {
 }
 
 export const initStarredRepos = repos => ({ repos, type: INIT_STARRED_REPOS })
-export const addStarredReposTag = (repoId, tagId) => ({ repoId, tagId, type: ADD_STARRED_REPOS_TAG })
-export const deleteStarredReposTag = repoId => ({ repoId, type: DELETE_STARRED_REPOS_TAG })
+export const addStarredRepoTag = (repoId, tag) => ({ repoId, tag, type: ADD_STARRED_REPO_TAG })
+export const deleteStarredRepoTag = (repoId, tagId) => ({ repoId, tagId, type: DELETE_STARRED_REPO_TAG })

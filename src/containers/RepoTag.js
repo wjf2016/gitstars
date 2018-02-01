@@ -29,9 +29,9 @@ class RepoTag extends Component {
   handleConfirmDelete = e => {
     e.stopPropagation()
 
-    const { repo, repoIndex, tag, tagIndex, deleteCustomTagRepo } = this.props
+    const { repo, tag, deleteCustomTagRepo } = this.props
 
-    deleteCustomTagRepo(tag, tagIndex, repo, repoIndex)
+    deleteCustomTagRepo(tag.id, repo.id)
       .then(_ => {
         notification.success({
           message: `${repo.owner.login} / ${repo.name}`,
@@ -68,16 +68,14 @@ class RepoTag extends Component {
 
 RepoTag.propTypes = {
   repo: PropTypes.object.isRequired,
-  repoIndex: PropTypes.number.isRequired,
   tag: PropTypes.object.isRequired,
-  tagIndex: PropTypes.number.isRequired,
   switchTag: PropTypes.func.isRequired,
   deleteCustomTagRepo: PropTypes.func.isRequired
 }
 
 const mapDispatchToProps = dispatch => ({
   switchTag: tag => dispatch(switchTag(tag)),
-  deleteCustomTagRepo: (tag, tagIndex, repo, repoIndex) => dispatch(updateCustomTags(deleteCustomTagRepo(tag, tagIndex, repo, repoIndex)))
+  deleteCustomTagRepo: (tagId, repoId) => dispatch(updateCustomTags(deleteCustomTagRepo(tagId, repoId)))
 })
 
 export default connect(null, mapDispatchToProps)(RepoTag)

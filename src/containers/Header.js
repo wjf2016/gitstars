@@ -12,7 +12,7 @@ class Header extends Component {
             <img src={user.avatar_url} alt='avatar' className='user-avatar' />
           </a>
           <h1 className='user-name'>
-            <a href={user.html_url} target='_blank' rel='noopener noreferrer'>{user.name}’s Starred Repositories</a>
+            <a href={user.html_url} target='_blank' rel='noopener noreferrer'>{user.name}'s Starred Repositories</a>
           </h1>
         </div>
         <a href='https://github.com/Monine/gitstars' target='_blank' rel="noopener noreferrer" className='octocat-link'>

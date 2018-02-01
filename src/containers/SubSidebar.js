@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import RepoList from './RepoList'
-import { filterActiveReposByTag } from '../reducers/active-repos'
 import '../subsidebar.css'
 
 class SubSidebar extends Component {
@@ -10,14 +9,8 @@ class SubSidebar extends Component {
     searchValue: ''
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.activeTag.id !== this.props.activeTag.id) {
-      this.props.onFilterReposByTag(nextProps.activeTag)
-    }
-  }
-
-  handleChangeSearchValue = _ => {
-
+  handleChangeSearchValue = e => {
+    this.setState({ searchValue: e.target.value })
   }
 
   render () {
@@ -37,15 +30,14 @@ class SubSidebar extends Component {
             onChange={handleChangeSearchValue}
           />
         </label>
-        <RepoList />
+        <RepoList search={searchValue} />
       </nav>
     )
   }
 }
 
 SubSidebar.propTypes = {
-  activeTag: PropTypes.object,
-  onFilterReposByTag: PropTypes.func.isRequired
+  activeTag: PropTypes.object
 }
 
 SubSidebar.defaultProps = {
@@ -56,8 +48,4 @@ const mapStateToProps = state => ({
   activeTag: state.activeTag
 })
 
-const mapDispatchToProps = dispatch => ({
-  onFilterReposByTag: tag => dispatch(filterActiveReposByTag(tag))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubSidebar)
+export default connect(mapStateToProps)(SubSidebar)

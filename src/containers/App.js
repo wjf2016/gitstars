@@ -6,7 +6,7 @@ import axios from 'axios'
 import Sidebar from './Sidebar'
 import Main from './Main'
 import { initCustomTags } from '../reducers/custom-tags'
-import { initActiveRepos } from '../reducers/active-repos'
+import { initStarredRepos } from '../reducers/starred-repos'
 import { getStarredRepos, getGitstarsGist } from '../api'
 import config from '../config'
 
@@ -117,7 +117,7 @@ App.propTypes = {
 }
 
 const mapDispatchToProps = dispatch => ({
-  initStarredRepos: repos => dispatch(initActiveRepos(repos)),
+  initStarredRepos: repos => dispatch(initStarredRepos(repos)),
   initCustomTags: tags => dispatch(initCustomTags(tags))
 })
 
