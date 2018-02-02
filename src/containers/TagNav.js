@@ -15,7 +15,7 @@ class TagNav extends Component {
     popoverVisible: false
   }
 
-  handleSwitch = _ => {
+  handleSwitch = () => {
     const { isActive, isEditingTags, canDrag, tag, onClick } = this.props
 
     if (isEditingTags && !canDrag) {
@@ -38,14 +38,14 @@ class TagNav extends Component {
     this.setState({
       inputVisible: true,
       newName: tag.name
-    }, _ => this.tagNameInput.focus())
+    }, () => this.tagNameInput.focus())
   }
 
   handleChangeName = e => {
     this.setState({ newName: e.target.value })
   }
 
-  handleChangeNameComplete = _ => {
+  handleChangeNameComplete = () => {
     const { props, state } = this
     const { tag, validateCustomTagName, modifyName } = props
     const { inputVisible, newName } = state
@@ -117,13 +117,9 @@ class TagNav extends Component {
       connectDropTarget,
       isDragging
     } = props
-    const {
-      inputVisible,
-      newName,
-      popoverVisible
-    } = state
+    const { inputVisible, newName, popoverVisible } = state
 
-    const tagNavNode = (_ => (
+    const tagNavNode = (() => (
       <li
         className={`nav-item ${isActive && !isEditingTags ? 'active' : ''} ${isDragging ? 'dragging' : ''}`}
         onClick={handleSwitch}>

@@ -34,15 +34,15 @@ class TagNameForm extends Component {
     })
   }
 
-  handleFocus = _ => {
+  handleFocus = () => {
     this.setState({ inputState: FOCUS })
   }
 
-  handleBlur = _ => {
+  handleBlur = () => {
     this.setState({ inputState: BLUR })
   }
 
-  handleAdd = async _ => {
+  handleAdd = async () => {
     const name = await this.props.validateCustomTagName(this.state.name.trim())
       .catch(err => {
         notification.warning({
@@ -55,7 +55,7 @@ class TagNameForm extends Component {
     if (!name) return
 
     this.props.onAdd({ id: Date.now(), name, repos: List() })
-      .then(_ => {
+      .then(() => {
         notification.success({
           message: '更新成功',
           description: `添加标签：${name}`
@@ -75,7 +75,7 @@ class TagNameForm extends Component {
     }
   }
 
-  handleCancelAdd = _ => {
+  handleCancelAdd = () => {
     this.setState({ name: '', btnState: CANCEL })
     this.props.onCancelAddTag()
   }
@@ -119,7 +119,7 @@ class TagNameForm extends Component {
 
 TagNameForm.propTypes = {
   visible: PropTypes.bool.isRequired,
-  customTags: PropTypes.instanceOf(List).isRequired,
+  customTags: PropTypes.instanceOf(List),
   onAdd: PropTypes.func.isRequired,
   onCancelAddTag: PropTypes.func.isRequired,
   validateCustomTagName: PropTypes.func.isRequired

@@ -1,5 +1,3 @@
-import { List } from 'immutable'
-
 const INIT_STARRED_REPOS = 'INIT_STARRED_REPOS'
 const ADD_STARRED_REPO_TAG = 'ADD_STARRED_REPO_TAG'
 const DELETE_STARRED_REPO_TAG = 'DELETE_STARRED_REPO_TAG'
@@ -7,7 +5,7 @@ const DELETE_STARRED_REPO_TAG = 'DELETE_STARRED_REPO_TAG'
 let repoIndex = 0
 let tagIndex = 0
 
-export default function starredRepos (state = List(), action) {
+export default function starredRepos (state = null, action) {
   switch (action.type) {
     case INIT_STARRED_REPOS:
       return action.repos

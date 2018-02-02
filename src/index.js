@@ -7,13 +7,7 @@ import { notification } from 'antd'
 import App from './containers/App'
 import reducers from './reducers'
 import { getUserInfo } from './api'
-
-import 'font-awesome/css/font-awesome.css'
-import 'github-markdown-css'
-import './base.css'
-import './app.css'
-import './sidebar.css'
-import './transition.css'
+import './css/app.css'
 
 notification.config({ placement: 'bottomRight' })
 
@@ -22,19 +16,19 @@ const store = createStore(
   applyMiddleware(ReduxThunk)
 )
 
-window._gitstars = {}
-
-/* eslint-disable no-new */
-new Promise(async (resolve, reject) => {
-  const GITSTARS_USER = 'gitstars_user'
+const GITSTARS_USER = 'gitstars_user'
+const loadUserInfo = async () => {
   let userInfo = window.localStorage.getItem(GITSTARS_USER)
 
-  if (userInfo) return resolve(JSON.parse(userInfo))
+  if (userInfo) return JSON.parse(userInfo)
 
   userInfo = await getUserInfo()
+  return userInfo
+}
+
+window._gitstars = {}
+loadUserInfo().then(userInfo => {
   window.localStorage.setItem(GITSTARS_USER, JSON.stringify(userInfo))
-  resolve(userInfo)
-}).then(userInfo => {
   window._gitstars.user = userInfo
 
   render(

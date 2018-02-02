@@ -11,7 +11,7 @@ const { tagCategorys } = config
 let customTagsClone = null
 
 class TagNavHeader extends Component {
-  handleAddNewTag = _ => {
+  handleAddNewTag = () => {
     const { tagNameFormVisible, isEditingTags, onToggleTagNameFormVisible } = this.props
 
     if (isEditingTags || tagNameFormVisible) return
@@ -19,7 +19,7 @@ class TagNavHeader extends Component {
     onToggleTagNameFormVisible()
   }
 
-  handleEditTags = _ => {
+  handleEditTags = () => {
     const { tagNameFormVisible, customTags, onEditTags } = this.props
 
     if (tagNameFormVisible || !customTags.size) return
@@ -28,7 +28,7 @@ class TagNavHeader extends Component {
     onEditTags()
   }
 
-  handleEditTagsComplete = _ => {
+  handleEditTagsComplete = () => {
     const { customTags, onEditTagsComplete, updateCustomTags } = this.props
 
     onEditTagsComplete()
@@ -38,7 +38,7 @@ class TagNavHeader extends Component {
     customTagsClone = null
 
     updateCustomTags()
-      .then(_ => {
+      .then(() => {
         notification.success({
           message: '更新成功',
           description: '编辑标签完成'
@@ -56,33 +56,36 @@ class TagNavHeader extends Component {
           <i className='fa fa-fw fa-tags' aria-hidden />
           <span>tags</span>
         </h3>
-        <DisplayCSSTransition
-          in={activeTagCategory.id === tagCategorys.custom.id}
-          timeout={300}
-          classNames='slide-to-left'
-        >
-          <div className='nav-caption__operate'>
-            <div
-              className={`nav-caption__operate-btn ${isEditingTags || tagNameFormVisible ? 'disabled' : ''}`}
-              onClick={handleAddNewTag}
-            >
-              <i className='fa fa-plus-square' aria-hidden />
-              add
-            </div>
-            <DisplayCSSTransition in={!isEditingTags} timeout={150} classNames='enlarge'>
+        {
+          customTags &&
+          <DisplayCSSTransition
+            in={activeTagCategory.id === tagCategorys.custom.id}
+            timeout={300}
+            classNames='slide-to-left'
+          >
+            <div className='nav-caption__operate'>
               <div
-                className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.size ? 'disabled' : ''}`}
-                onClick={handleEditTags}
+                className={`nav-caption__operate-btn ${isEditingTags || tagNameFormVisible ? 'disabled' : ''}`}
+                onClick={handleAddNewTag}
               >
-                <i className='fa fa-cog' aria-hidden />
-                edit
+                <i className='fa fa-plus-square' aria-hidden />
+                add
               </div>
-            </DisplayCSSTransition>
-            <DisplayCSSTransition in={isEditingTags} timeout={150} classNames='enlarge'>
-              <div className='nav-caption__operate-btn' onClick={handleEditTagsComplete}>ok</div>
-            </DisplayCSSTransition>
-          </div>
-        </DisplayCSSTransition>
+              <DisplayCSSTransition in={!isEditingTags} timeout={150} classNames='enlarge'>
+                <div
+                  className={`nav-caption__operate-btn ${tagNameFormVisible || !customTags.size ? 'disabled' : ''}`}
+                  onClick={handleEditTags}
+                >
+                  <i className='fa fa-cog' aria-hidden />
+                  edit
+                </div>
+              </DisplayCSSTransition>
+              <DisplayCSSTransition in={isEditingTags} timeout={150} classNames='enlarge'>
+                <div className='nav-caption__operate-btn' onClick={handleEditTagsComplete}>ok</div>
+              </DisplayCSSTransition>
+            </div>
+          </DisplayCSSTransition>
+        }
       </header>
     )
   }
@@ -95,7 +98,7 @@ TagNavHeader.propTypes = {
   isEditingTags: PropTypes.bool.isRequired,
   onEditTags: PropTypes.func.isRequired,
   onEditTagsComplete: PropTypes.func.isRequired,
-  customTags: PropTypes.instanceOf(List).isRequired,
+  customTags: PropTypes.instanceOf(List),
   updateCustomTags: PropTypes.func.isRequired
 }
 
@@ -104,7 +107,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  updateCustomTags: _ => dispatch(updateCustomTags())
+  updateCustomTags: () => dispatch(updateCustomTags())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagNavHeader)

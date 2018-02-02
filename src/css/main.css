@@ -26,14 +26,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 44px;
+  height: 45px;
   padding: 0 15px;
   border-bottom: 1px solid #e9e9e9;
   background-color: #fbfbfb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .repo-readme__header .fa-github,
-.repo-title {
+.repo-readme__header .repo-title {
   color: #5a5a5a;
 }
 .repo-tag-input {
@@ -44,7 +44,7 @@
 }
 .markdown-body {
   overflow: auto;
-  height: calc(100% - 85px);
+  height: calc(100% - 45px);
   padding: 20px;
   font-size: 14px;
   color: #5a5a5a;
@@ -63,9 +63,11 @@
   font-size: 28px;
   margin: 0.5em;
   font-weight: 700;
+  color: inherit;
 }
 .loader {
   height: 28px;
+  color: inherit;
 }
 .markdown-body a:hover {
   color: #0366d6;

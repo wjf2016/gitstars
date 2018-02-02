@@ -19,21 +19,21 @@ class Sidebar extends Component {
     activeTagCategory: tagCategorys.custom
   }
 
-  handleToggleTagNameFormVisible = _ => {
+  handleToggleTagNameFormVisible = () => {
     this.setState((prevState, props) => ({
       tagNameFormVisible: !prevState.tagNameFormVisible
     }))
   }
 
-  handleEditTags = _ => {
+  handleEditTags = () => {
     this.setState({ isEditingTags: true })
   }
 
-  handleEditTagsComplete = _ => {
+  handleEditTagsComplete = () => {
     this.setState({ isEditingTags: false })
   }
 
-  handleCancelAddTag = _ => {
+  handleCancelAddTag = () => {
     this.setState({ tagNameFormVisible: false })
   }
 
@@ -113,7 +113,7 @@ class Sidebar extends Component {
 
 Sidebar.propTypes = {
   languageTags: PropTypes.instanceOf(List).isRequired,
-  customTags: PropTypes.instanceOf(List).isRequired
+  customTags: PropTypes.instanceOf(List)
 }
 
 const mapStateToProps = state => ({

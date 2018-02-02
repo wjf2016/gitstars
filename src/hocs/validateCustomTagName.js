@@ -17,7 +17,7 @@ export default WrappedComponent => {
   }
 
   ValidateCustomTagNameWrap.propTypes = {
-    customTags: PropTypes.instanceOf(List).isRequired
+    customTags: PropTypes.instanceOf(List)
   }
 
   const mapStateToProps = state => ({ customTags: state.customTags })

@@ -1,3 +1,7 @@
+@import '~font-awesome/css/font-awesome.css';
+@import '~github-markdown-css';
+@import './base.css';
+
 #root {
   height: 100%;
 }
@@ -35,3 +39,9 @@
   margin-left: 10px;
   text-transform: capitalize;
 }
+
+@import './sidebar.css';
+@import './header.css';
+@import './main.css';
+@import './subsidebar.css';
+@import './transition.css';

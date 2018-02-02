@@ -1,8 +1,7 @@
 import React from 'react'
-import { List } from 'immutable'
 import { notification } from 'antd'
 import { saveGitstarsGist } from '../api'
-import { deleteStarredRepoTag, initStarredRepos } from './starred-repos'
+import { deleteStarredRepoTag, initStarredRepos, addStarredRepoTag } from './starred-repos'
 import config from '../config'
 
 const INIT_CUSTOM_TAGS = 'INIT_CUSTOM_TAGS'
@@ -13,7 +12,10 @@ const MOVE_CUSTOM_TAG = 'MOVE_CUSTOM_TAG'
 const ADD_CUSTOM_TAG_REPO = 'ADD_CUSTOM_TAG_REPO'
 const DELETE_CUSTOM_TAG_REPO = 'DELETE_CUSTOM_TAG_REPO'
 
-export default function customTagsReducer (state = List(), action) {
+let tagIndex = 0
+let repoIndex = 0
+
+export default function customTagsReducer (state = null, action) {
   switch (action.type) {
     case INIT_CUSTOM_TAGS:
       return action.tags
@@ -26,14 +28,14 @@ export default function customTagsReducer (state = List(), action) {
     case MOVE_CUSTOM_TAG:
       return state.delete(action.fromIndex).insert(action.toIndex, state.get(action.fromIndex))
     case ADD_CUSTOM_TAG_REPO:
+      tagIndex = state.findIndex(tag => tag.id === action.tag.id)
       return state.setIn(
-        [action.tagIndex, 'repos'],
-        state.get(action.tagIndex).repos.push(action.id)
+        [tagIndex, 'repos'],
+        state.get(tagIndex).repos.push(action.repoId)
       )
     case DELETE_CUSTOM_TAG_REPO:
-      const tag = state.find(tag => tag.id === action.tagId)
-      const tagIndex = state.findIndex(tag => tag.id === action.tagId)
-      const repoIndex = tag.repos.findIndex(repoId => repoId === action.repoId)
+      tagIndex = state.findIndex(tag => tag.id === action.tag.id)
+      repoIndex = action.tag.repos.findIndex(repoId => repoId === action.repoId)
       return state.deleteIn([tagIndex, 'repos', repoIndex])
     default:
       return state
@@ -45,8 +47,8 @@ export const addCustomTag = tag => ({ tag, type: ADD_CUSTOM_TAG })
 export const modifyCustomTagName = (index, name) => ({ index, name, type: MODIFY_CUSTOM_TAG_NAME })
 export const deleteCustomTag = index => ({ index, type: DELETE_CUSTOM_TAG })
 export const moveCustomTag = (fromIndex, toIndex) => ({ fromIndex, toIndex, type: MOVE_CUSTOM_TAG })
-export const addCustomTagRepo = (tagIndex, id) => ({ tagIndex, id, type: ADD_CUSTOM_TAG_REPO })
-export const deleteCustomTagRepo = (tagId, repoId) => ({ tagId, repoId, type: DELETE_CUSTOM_TAG_REPO })
+export const addCustomTagRepo = (repoId, tag) => ({ repoId, tag, type: ADD_CUSTOM_TAG_REPO })
+export const deleteCustomTagRepo = (tag, repoId) => ({ tag, repoId, type: DELETE_CUSTOM_TAG_REPO })
 
 export const updateCustomTags = action => (dispatch, getState) => {
   const DateNow = Date.now()
@@ -66,21 +68,27 @@ export const updateCustomTags = action => (dispatch, getState) => {
     dispatch(action)
 
     if (action.type === DELETE_CUSTOM_TAG_REPO) {
-      const { repoId, tagId } = action
-      dispatch(deleteStarredRepoTag(repoId, tagId))
+      const { repoId, tag } = action
+      dispatch(deleteStarredRepoTag(repoId, tag.id))
+    } else if (action.type === ADD_CUSTOM_TAG_REPO) {
+      const { repoId, tag } = action
+      dispatch(addStarredRepoTag(repoId, tag))
     }
   }
 
   const gist = { lastModified: DateNow, tags: newCustomTags }
   return saveGitstarsGist(gist)
-    .then(_ => {
+    .then(() => {
       notification.close(DateNow)
       window.localStorage.setItem(config.gistId, JSON.stringify(gist))
     })
-    .catch(_ => {
+    .catch(() => {
       dispatch(initCustomTags(customTags))
 
-      if (action.type === DELETE_CUSTOM_TAG_REPO) {
+      if (
+        action.type === DELETE_CUSTOM_TAG_REPO ||
+        action.type === ADD_CUSTOM_TAG_REPO
+      ) {
         dispatch(initStarredRepos(starredRepos))
       }
     })

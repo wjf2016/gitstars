@@ -11,7 +11,7 @@ class RepoTag extends Component {
     popoverVisible: false
   }
 
-  handleClick = _ => {
+  handleClick = () => {
     const { tag, switchTag } = this.props
     switchTag(tag)
   }
@@ -31,8 +31,8 @@ class RepoTag extends Component {
 
     const { repo, tag, deleteCustomTagRepo } = this.props
 
-    deleteCustomTagRepo(tag.id, repo.id)
-      .then(_ => {
+    deleteCustomTagRepo(tag, repo.id)
+      .then(() => {
         notification.success({
           message: `${repo.owner.login} / ${repo.name}`,
           description: `删除标签：${tag.name}`
@@ -75,7 +75,7 @@ RepoTag.propTypes = {
 
 const mapDispatchToProps = dispatch => ({
   switchTag: tag => dispatch(switchTag(tag)),
-  deleteCustomTagRepo: (tagId, repoId) => dispatch(updateCustomTags(deleteCustomTagRepo(tagId, repoId)))
+  deleteCustomTagRepo: (tag, repoId) => dispatch(updateCustomTags(deleteCustomTagRepo(tag, repoId)))
 })
 
 export default connect(null, mapDispatchToProps)(RepoTag)

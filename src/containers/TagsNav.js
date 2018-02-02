@@ -15,6 +15,7 @@ class TagsNav extends Component {
     return (
       <ul className={`nav-tag ${className}`} style={style}>
         {
+          tags &&
           tags.map((tag, index) => (
             <TagNav
               key={tag.id}
@@ -39,7 +40,7 @@ TagsNav.propTypes = {
   tags: PropTypes.oneOfType([
     PropTypes.array,
     PropTypes.instanceOf(List)
-  ]).isRequired,
+  ]),
   isEditingTags: PropTypes.bool,
   canDrag: PropTypes.bool,
   draggable: PropTypes.bool,

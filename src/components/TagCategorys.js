@@ -21,7 +21,7 @@ class TagCategorys extends Component {
             <li
               key={category.id}
               className={`tag-category__item ${category.id === activeCategory.id ? 'active' : ''}`}
-              onClick={_ => onSwitchCategory(category)}>
+              onClick={() => onSwitchCategory(category)}>
               {category.name}
             </li>
           ))

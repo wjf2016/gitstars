@@ -4,63 +4,20 @@ import { connect } from 'react-redux'
 import { List } from 'immutable'
 import RepoTag from './RepoTag'
 import { switchActiveRepo } from '../reducers/active-repo'
-import config from '../config'
-
-const { defaultTags } = config
-
-const filterReposByTag = (allRepos, tag) => {
-  const { id, repos } = tag
-
-  switch (id) {
-    case defaultTags.all.id:
-      return allRepos
-    case defaultTags.untagged.id:
-      return allRepos.filter(repo => !repo._customTags.size)
-    default:
-      return repos.map(repoId => allRepos.find(repo => repo.id === repoId))
-  }
-}
-
-const filterReposBySearch = (repos, search) => {
-  return repos.filter(({ owner = { login: '' }, name = '' }) => {
-    return (
-      owner.login.toLowerCase().includes(search) ||
-      name.toLowerCase().includes(search)
-    )
-  })
-}
 
 class RepoList extends Component {
-  state = {
-    activeRepos: List()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { allRepos, activeTag, search } = nextProps
-    const { props } = this
-
-    if (
-      !allRepos.equals(props.allRepos) ||
-      activeTag !== props.activeTag ||
-      search !== props.search
-    ) {
-      this.setState({
-        activeRepos: filterReposBySearch(filterReposByTag(allRepos, activeTag), search)
-      })
-    }
-  }
-
   render () {
-    const { props, state } = this
+    const { starredRepos, activeRepo, activeRepos, switchRepo } = this.props
 
     return (
       <ul className='repo-list'>
         {
-          props.allRepos.map(repo => (
+          starredRepos &&
+          starredRepos.map(repo => (
             <li
               key={repo.id}
-              className={`repo-item ${repo.id === props.activeRepo.id ? 'active' : ''} ${state.activeRepos.includes(repo) ? '' : 'dn'}`}
-              onClick={_ => props.switchRepo(repo)}>
+              className={`repo-item ${activeRepo && repo.id === activeRepo.id ? 'active' : ''} ${activeRepos.includes(repo) ? '' : 'dn'}`}
+              onClick={() => switchRepo(repo)}>
               <header>
                 <h3 className='repo-title'>
                   <a href={repo.html_url} target="_blank" rel='noopener noreferrer'>
@@ -92,20 +49,14 @@ class RepoList extends Component {
 }
 
 RepoList.propTypes = {
-  search: PropTypes.string,
-  allRepos: PropTypes.instanceOf(List).isRequired,
-  activeTag: PropTypes.object.isRequired,
-  activeRepo: PropTypes.object.isRequired,
+  activeRepos: PropTypes.instanceOf(List),
+  starredRepos: PropTypes.instanceOf(List),
+  activeRepo: PropTypes.object,
   switchRepo: PropTypes.func.isRequired
 }
 
-RepoList.defaultTags = {
-  search: ''
-}
-
 const mapStateToProps = state => ({
-  allRepos: state.starredRepos,
-  activeTag: state.activeTag,
+  starredRepos: state.starredRepos,
   activeRepo: state.activeRepo
 })
 

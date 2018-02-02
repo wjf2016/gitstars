@@ -12,14 +12,14 @@ class DisplayCSSTransition extends Component {
     if (isWillShow !== this.props.in) this.setState({ isWillShow })
   }
 
-  handleEnter = _ => {
+  handleEnter = () => {
     this.setState({ isShow: true })
 
     const { onEnter } = this.props
     if (onEnter) onEnter()
   }
 
-  handleExited = _ => {
+  handleExited = () => {
     this.setState({ isShow: false })
 
     const { onExited } = this.props

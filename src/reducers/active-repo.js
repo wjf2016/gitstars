@@ -1,6 +1,6 @@
 const SWITCH_ACTIVE_REPO = 'SWITCH_ACTIVE_REPO'
 
-export default function activeRepo (state = {}, action) {
+export default function activeRepo (state = null, action) {
   switch (action.type) {
     case SWITCH_ACTIVE_REPO:
       return action.repo
