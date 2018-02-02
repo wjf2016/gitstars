@@ -38,7 +38,7 @@ Gitstars 由此诞生 🎉
 
 没有使用状态管理 vuex 这是故意的，我认为目前还没有到必须依赖状态管理模式的地步，使用 `props` 和 `$emit` 完全能够清晰的管理数据，不想偷懒滥用 vuex。
 
-本项目发布版使用 Vue 开发，源码在 [dev 分支](https://github.com/Monine/gitstars/tree/dev)，也有 React 开发版本，源码在 [react-dev 分支](https://github.com/Monine/gitstars/tree/react-dev)，仅用作练习。
+本项目发布版使用 Vue 开发，源码在 [dev 分支](https://github.com/Monine/gitstars/tree/dev)。也有 React 开发版本，源码在 [react-dev 分支](https://github.com/Monine/gitstars/tree/react-dev)，仅用作练习。
 
 欢迎阅读源码，提出意见。
 
