@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Tag, Popover, Icon, notification } from 'antd'
 import PopoverFooter from '../components/PopoverFooter'
-import { switchTag } from '../reducers/active-tag'
+import { switchActiveTag } from '../reducers/active-tag'
 import { updateCustomTags, deleteCustomTagRepo } from '../reducers/custom-tags'
 
 class RepoTag extends Component {
@@ -12,8 +12,8 @@ class RepoTag extends Component {
   }
 
   handleClick = () => {
-    const { tag, switchTag } = this.props
-    switchTag(tag)
+    const { tag, switchActiveTag } = this.props
+    switchActiveTag(tag)
   }
 
   handleDelete = e => {
@@ -69,12 +69,12 @@ class RepoTag extends Component {
 RepoTag.propTypes = {
   repo: PropTypes.object.isRequired,
   tag: PropTypes.object.isRequired,
-  switchTag: PropTypes.func.isRequired,
+  switchActiveTag: PropTypes.func.isRequired,
   deleteCustomTagRepo: PropTypes.func.isRequired
 }
 
 const mapDispatchToProps = dispatch => ({
-  switchTag: tag => dispatch(switchTag(tag)),
+  switchActiveTag: tag => dispatch(switchActiveTag(tag)),
   deleteCustomTagRepo: (tag, repoId) => dispatch(updateCustomTags(deleteCustomTagRepo(tag, repoId)))
 })
 

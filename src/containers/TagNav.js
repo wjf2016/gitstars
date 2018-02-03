@@ -153,7 +153,7 @@ class TagNav extends Component {
             <i className={`fa fa-times-circle ${isEditingTags && canDrag ? '' : 'dn'}`} onClick={handleDelete} aria-hidden />
           </Popover>
         }
-      </li >
+      </li>
     ))()
 
     return draggable ? connectDragSource(connectDropTarget(tagNavNode)) : tagNavNode

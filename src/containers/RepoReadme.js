@@ -19,12 +19,12 @@ class RepoReadme extends Component {
     const { activeRepo: nextActiveRepo, customTags: nextCustomTags } = nextProps
     const { activeRepo, customTags } = this.props
 
-    if (activeRepo) {
-      if (!nextCustomTags.equals(customTags) || nextActiveRepo.id !== activeRepo.id) {
+    if (nextActiveRepo) {
+      if (!nextCustomTags.equals(customTags) || nextActiveRepo !== activeRepo) {
         this.setState({ unstoredTags: nextCustomTags.filter(tag => !tag.repos.includes(nextActiveRepo.id)) })
       }
 
-      if (nextActiveRepo.id !== activeRepo.id) {
+      if (nextActiveRepo !== activeRepo) {
         this.setState({ readme: '' })
         const { content } = await getRepoReadme(nextActiveRepo.owner.login, nextActiveRepo.name)
 
@@ -60,7 +60,8 @@ class RepoReadme extends Component {
     const { props, state, handleSelectTag, handleChangeTagName } = this
     const { activeRepo } = props
     const { readme, unstoredTags, tagName } = state
-    // const hasActiveRepo = !!Object.keys(activeRepo).length
+
+    console.log(2222)
 
     return (
       <div className='content'>

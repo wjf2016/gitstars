@@ -5,12 +5,12 @@ import { List } from 'immutable'
 import { DragDropContext } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import TagNav from './TagNav'
-import { switchTag } from '../reducers/active-tag'
+import { switchActiveTag } from '../reducers/active-tag'
 import dndDragDrapContext from '../hocs/dndDragDrapContext'
 
 class TagsNav extends Component {
   render () {
-    const { className, style, tags, isEditingTags, canDrag, draggable, activeTag, onSwitchTag } = this.props
+    const { className, style, tags, isEditingTags, canDrag, draggable, activeTag, switchActiveTag } = this.props
 
     return (
       <ul className={`nav-tag ${className}`} style={style}>
@@ -24,7 +24,7 @@ class TagsNav extends Component {
               isEditingTags={isEditingTags}
               isActive={tag.id === activeTag.id}
               canDrag={canDrag}
-              onClick={onSwitchTag}
+              onClick={switchActiveTag}
               draggable={draggable}
             />
           ))
@@ -45,7 +45,7 @@ TagsNav.propTypes = {
   canDrag: PropTypes.bool,
   draggable: PropTypes.bool,
   activeTag: PropTypes.object.isRequired,
-  onSwitchTag: PropTypes.func.isRequired
+  switchActiveTag: PropTypes.func.isRequired
 }
 
 TagsNav.defaultProps = {
@@ -61,7 +61,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  onSwitchTag: tag => dispatch(switchTag(tag))
+  switchActiveTag: tag => dispatch(switchActiveTag(tag))
 })
 
 export default connect(

@@ -6,7 +6,7 @@ import DisplayCSSTransition from './DisplayCSSTransition'
 import TagsNav from './TagsNav'
 import TagNavHeader from './TagNavHeader'
 import NewTagNameForm from './NewTagNameForm'
-import TagCategorys from '../components/TagCategorys'
+import TagCategorys from './TagCategorys'
 import appNamePng from '../assets/app-name.png'
 import config from '../config'
 

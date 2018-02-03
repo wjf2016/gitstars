@@ -7,7 +7,7 @@ import { switchActiveRepo } from '../reducers/active-repo'
 
 class RepoList extends Component {
   render () {
-    const { starredRepos, activeRepo, activeRepos, switchRepo } = this.props
+    const { starredRepos, activeRepo, activeRepos, switchActiveRepo } = this.props
 
     return (
       <ul className='repo-list'>
@@ -17,7 +17,8 @@ class RepoList extends Component {
             <li
               key={repo.id}
               className={`repo-item ${activeRepo && repo.id === activeRepo.id ? 'active' : ''} ${activeRepos.includes(repo) ? '' : 'dn'}`}
-              onClick={() => switchRepo(repo)}>
+              onClick={() => switchActiveRepo(repo)}
+            >
               <header>
                 <h3 className='repo-title'>
                   <a href={repo.html_url} target="_blank" rel='noopener noreferrer'>
@@ -52,7 +53,7 @@ RepoList.propTypes = {
   activeRepos: PropTypes.instanceOf(List),
   starredRepos: PropTypes.instanceOf(List),
   activeRepo: PropTypes.object,
-  switchRepo: PropTypes.func.isRequired
+  switchActiveRepo: PropTypes.func.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -61,7 +62,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  switchRepo: repo => dispatch(switchActiveRepo(repo))
+  switchActiveRepo: repo => dispatch(switchActiveRepo(repo))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(RepoList)
