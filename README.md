@@ -23,7 +23,7 @@ Gitstars 由此诞生 🎉
 
 欢迎进入 [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) 体验畅玩，更欢迎体验之后在 [Issues](https://github.com/Monine/gitstars/issues) 提供建议。
 
-![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.1.1.jpg)
+![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.2.0.jpg)
 
 *感谢 [imsun](https://github.com/imsun) 提供获取 access token 服务*
 
@@ -38,11 +38,13 @@ Gitstars 由此诞生 🎉
 
 没有使用状态管理 vuex 这是故意的，我认为目前还没有到必须依赖状态管理模式的地步，使用 `props` 和 `$emit` 完全能够清晰的管理数据，不想偷懒滥用 vuex。
 
+本项目发布版使用 Vue 开发，源码在 [dev 分支](https://github.com/Monine/gitstars/tree/dev)。也有 React 开发版本，源码在 [react-dev 分支](https://github.com/Monine/gitstars/tree/react-dev)，仅用作练习。
+
 欢迎阅读源码，提出意见。
 
 ## 简介
 
-界面风格模仿 [Astral](https://app.astralapp.com)
+界面风格模仿 [Astral](https://app.astralapp.com)，支持中英文切换。
 
 你可能会好奇，没有数据库，标签管理数据保存在哪？请看下图：
 

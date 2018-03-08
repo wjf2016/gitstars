@@ -23,7 +23,7 @@ This is a project that emphasizes experience and detail, and I try my best to do
 
 Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) to enjoy the fun, more welcome to provide advice in the [Issues](https://github.com/Monine/gitstars/issues) after the experience.
 
-![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.1.1.jpg)
+![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.2.0.jpg)
 
 *Thanks to [imsun](https://github.com/imsun) for get access token service*
 
@@ -38,11 +38,13 @@ Extensive use of Flex layout, so please do not use on IE.
 
 Not using state management vuex this is intentional, and I do not think there's any point in having to rely on state management. Using `props` and `$emit` makes it perfectly manageable and does not want to abuse vuex.
 
+The project release version using Vue development, source [dev branch](https://github.com/Monine/gitstars/tree/dev). There is also a React development version, source in [react-dev branch](https://github.com/Monine/gitstars/tree/react-dev), just for practice.
+
 Welcome to read the source code, make comments.
 
 ## Introduction
 
-Interface style mimics [Astral](https://app.astralapp.com).
+Interface style mimics [Astral](https://app.astralapp.com), support Chinese and English switch.
 
 You may be curious, there is no database, where is the tag management data stored? Please see below:
 
