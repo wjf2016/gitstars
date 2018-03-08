@@ -19,8 +19,6 @@ Pure front-end implementation, no server and database, your github is everything
 
 > Github stars repositories manager, which every developer owns.
 
-This is a project that emphasizes experience and detail, and I try my best to do all sorts of optimization, code, vision, interaction, etc ...
-
 Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) to enjoy the fun, more welcome to provide advice in the [Issues](https://github.com/Monine/gitstars/issues) after the experience.
 
 ![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.2.0.jpg)
@@ -30,13 +28,12 @@ Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstar
 ## Technology stack
 
 - [Vue](https://cn.vuejs.org/)
+- [Vuex](https://vuex.vuejs.org/)
 - [Element-UI](http://element-cn.eleme.io/2.0/#/zh-CN)
 - [Axios](https://github.com/axios/axios)
 - [Github API v3](https://developer.github.com/v3/)
 
 Extensive use of Flex layout, so please do not use on IE.
-
-Not using state management vuex this is intentional, and I do not think there's any point in having to rely on state management. Using `props` and `$emit` makes it perfectly manageable and does not want to abuse vuex.
 
 The project release version using Vue development, source [dev branch](https://github.com/Monine/gitstars/tree/dev). There is also a React development version, source in [react-dev branch](https://github.com/Monine/gitstars/tree/react-dev), just for practice.
 
