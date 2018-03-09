@@ -21,7 +21,7 @@ Pure front-end implementation, no server and database, your github is everything
 
 Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) to enjoy the fun, more welcome to provide advice in the [Issues](https://github.com/Monine/gitstars/issues) after the experience.
 
-![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.2.0.jpg)
+![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v2.0.0.jpg)
 
 *Thanks to [imsun](https://github.com/imsun) for get access token service*
 
@@ -45,7 +45,7 @@ Interface style mimics [Astral](https://app.astralapp.com), support Chinese and 
 
 You may be curious, there is no database, where is the tag management data stored? Please see below:
 
-![gitstars-gists-gitstars-json](http://oh8wftuto.bkt.clouddn.com/gitstars-gist-v1.0.2.jpg)
+![gitstars-gists-gitstars-json](http://oh8wftuto.bkt.clouddn.com/gitstars-gist-v2.0.0.jpg)
 
 When you first visit gitstars, a gist project with the file `gitstars.json` will be created within your github gists (There are two on the map because the development needs, as a user, you will only have one).
 

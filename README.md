@@ -21,7 +21,7 @@ Gitstars 由此诞生 🎉
 
 欢迎进入 [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) 体验畅玩，更欢迎体验之后在 [Issues](https://github.com/Monine/gitstars/issues) 提供建议。
 
-![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v1.2.0.jpg)
+![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v2.0.0.jpg)
 
 *感谢 [imsun](https://github.com/imsun) 提供获取 access token 服务*
 
@@ -45,7 +45,7 @@ Gitstars 由此诞生 🎉
 
 你可能会好奇，没有数据库，标签管理数据保存在哪？请看下图：
 
-![gitstars-gists-gitstars-json](http://oh8wftuto.bkt.clouddn.com/gitstars-gist-v1.0.2.jpg)
+![gitstars-gists-gitstars-json](http://oh8wftuto.bkt.clouddn.com/gitstars-gist-v2.0.0.jpg)
 
 当你第一次访问 [Gitstars](https://monine.github.io/gitstars/)，你的 Github Gists 内会生成一个文件名为 `gitstars.json` 的 Gist 项目。（上图有两个是因为开发所需，作为用户，你只会有一个。）
 
