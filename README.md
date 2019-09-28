@@ -21,9 +21,7 @@ Gitstars 由此诞生 🎉
 
 欢迎进入 [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) 体验畅玩，更欢迎体验之后在 [Issues](https://github.com/Monine/gitstars/issues) 提供建议。
 
-![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v2.0.0.jpg)
-
-*感谢 [imsun](https://github.com/imsun) 提供获取 access token 服务*
+![uQZDQH.png](https://s2.ax1x.com/2019/09/28/uQZDQH.png)
 
 ## 技术栈
 
@@ -45,7 +43,7 @@ Gitstars 由此诞生 🎉
 
 你可能会好奇，没有数据库，标签管理数据保存在哪？请看下图：
 
-![gitstars-gists-gitstars-json](http://oh8wftuto.bkt.clouddn.com/gitstars-gist-v2.0.0.jpg)
+![uQVgGF.png](https://s2.ax1x.com/2019/09/28/uQVgGF.png)
 
 当你第一次访问 [Gitstars](https://monine.github.io/gitstars/)，你的 Github Gists 内会生成一个文件名为 `gitstars.json` 的 Gist 项目。（上图有两个是因为开发所需，作为用户，你只会有一个。）
 
@@ -53,7 +51,7 @@ Gitstars 由此诞生 🎉
 
 但是，每次使用从 Github API 获取管理数据相对较慢，而且从 Github API 获取的数据都会有 60 秒的缓存（可查看 Response Header Cache-Control 字段），也就是说你修改了管理数据后刷新页面会发现依然是修改之前的数据，为此我有邮件询问 Github 如何取消缓存，回复是无法取消...
 
-![github-api-replay-cache-control](http://oh8wftuto.bkt.clouddn.com/github-api-replay-cache-control.jpg)
+![uQV224.png](https://s2.ax1x.com/2019/09/28/uQV224.png)
 
 因此为了解决此处体验问题，使我想到一个就算没有上述问题也应该做的一项优化：
 
